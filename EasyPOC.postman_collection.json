@@ -1,0 +1,412 @@
+{
+	"info": {
+		"_postman_id": "e01eaf9c-294b-4ac8-b93f-27591cd13b91",
+		"name": "EasyPOC",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24313612"
+	},
+	"item": [
+		{
+			"name": "GetAboutInfo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"/**I store the answer in JsonDta */\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"/**valid if the status code is 200*/\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"System version\", ()=>{\r",
+							"    pm.expect(jsonData.version).to.eql(\"4.32.21.26\")\r",
+							"});\r",
+							"pm.test(\"System name\", ()=>{\r",
+							"    pm.expect(jsonData.name).to.eql(\"EasyPoc\")\r",
+							"});\r",
+							"pm.test(\"Verifying the existence of properties in domainController\", function () {\r",
+							"    pm.expect(jsonData.domainController).to.have.all.keys('currentTime', 'currentTimeLocal');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"/**I assign the values to the parameters of the url from the json file*/\r",
+							"/*const keys = Object.keys(data);\r",
+							"keys.map((key) => {\r",
+							"    pm.environment.set(key, data[key]);\r",
+							"})*/\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{easypoc.token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "accept",
+						"value": "application/json"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 Edg/87.0.664.66"
+					},
+					{
+						"key": "Referer",
+						"value": "http://easypoc.dev.aic.carrasco.aero/swagger/index.html"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "es,es-ES;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json; charset=utf-8",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{easypoc.url}}/api/About/GetAboutInfo",
+					"host": [
+						"{{easypoc.url}}"
+					],
+					"path": [
+						"api",
+						"About",
+						"GetAboutInfo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetFlightsPocEnabled",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"/**I store the answer in JsonDta */\r",
+							"const jsonData = pm.response.json();\r",
+							"let numberFlight = 0;\r",
+							"\r",
+							"/**I count the number of flights that exist */\r",
+							"const flights = jsonData.data.length;\r",
+							"\r",
+							"console.log('flights: ', flights)\r",
+							"console.log('INDEX: ', data.index)\r",
+							"\r",
+							"/**If there are flights, I will save the information of the flight in question for use in the rest of the services. */\r",
+							"if (flights > 0) {\r",
+							"\r",
+							"    pm.environment.set(\"stda\", jsonData.data[numberFlight].stda);\r",
+							"    pm.environment.set(\"moveType\", jsonData.data[numberFlight].moveType);\r",
+							"    pm.environment.set(\"iataCode\", jsonData.data[numberFlight].iataCode);\r",
+							"    pm.environment.set(\"flightNumber\", jsonData.data[numberFlight].flightNumber);\r",
+							"    pm.environment.set(\"stdaJul\", jsonData.data[numberFlight].stdaJul);\r",
+							"    pm.environment.set(\"atda\", jsonData.data[numberFlight].atda);\r",
+							"    let unixTimestamp = jsonData.data[numberFlight].stda;\r",
+							"\r",
+							"    let date = new Date(unixTimestamp * 1000); //multiply 1000 converts Unix  to JavaScript \r",
+							"    let getHours = String(date.getHours()).padStart(2, '0');\r",
+							"    let getMin = String(date.getMinutes()).padStart(2, '0');\r",
+							"    let getSec = String(date.getSeconds()).padStart(2, '0');\r",
+							"    let getday = String(date.getDate()).padStart(2, '0');\r",
+							"    let getMonth = String(date.getMonth() + 1).padStart(2, '0');\r",
+							"\r",
+							"    pm.environment.set(\"progTime\", (getday + \"/\" + getMonth + \"/\" + date.getFullYear() + \" \" + getHours + \":\" + getMin + \":\" + getSec));\r",
+							"    pm.environment.set(\"progTime_Backup\", (getday + \"/\" + getMonth + \"/\" + date.getFullYear() + \" \" + getHours + \":\" + getMin + \":\" + getSec));\r",
+							"    pm.environment.set(\"destination\", jsonData.data[numberFlight].iataDestinationOrigin);\r",
+							"    pm.environment.set(\"destination_Backup\", jsonData.data[numberFlight].iataDestinationOrigin);\r",
+							"    pm.environment.set(\"flightCode\", jsonData.data[numberFlight].iataCode.padStart(3, \" \") + jsonData.data[numberFlight].flightNumber.padEnd(5, \" \"));\r",
+							"    pm.environment.set(\"flightCode_Backup\", jsonData.data[numberFlight].iataCode.padStart(3, \" \") + jsonData.data[numberFlight].flightNumber.padEnd(5, \" \"));\r",
+							"    pm.environment.set(\"origin\", jsonData.data[numberFlight].arpt);\r",
+							"    pm.environment.set(\"origin_Backup\", jsonData.data[numberFlight].arpt);\r",
+							"    pm.environment.set(\"flightId\", jsonData.data[numberFlight].id);\r",
+							"\r",
+							"    let docID = \"CI\" + (new Date() - 1615304326);\r",
+							"    pm.environment.set(\"documentID\", docID);\r",
+							"    /**A bcbp is passed from json file to validate */\r",
+							"    /*if (data?.validBcbp) {\r",
+							"        postman.setNextRequest(\"Check/ValidationBcbp\");\r",
+							"    }/**Passed the bcbp of a passenger who does not exist*/\r",
+							"    /*else if (data?.checkOut) {\r",
+							"        pm.environment.set(\"bcbp\", data.bcbp)\r",
+							"        postman.setNextRequest(\"Check/CheckOut\");\r",
+							"    } else {\r",
+							"        postman.setNextRequest(\"CreatePassengerBcbp\");\r",
+							"    }*/\r",
+							"\r",
+							"} else {\r",
+							"    postman.setNextRequest(null);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{easycore.token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 Edg/87.0.664.66"
+					},
+					{
+						"key": "Referer",
+						"value": "http://easycore.dev.aic.carrasco.aero:5009/swagger/index.html"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "es,es-ES;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{easycore.url}}/api/Flight/GetFlightsPocEnabled?userName={{userName}}&terminalId={{terminalId}}",
+					"host": [
+						"{{easycore.url}}"
+					],
+					"path": [
+						"api",
+						"Flight",
+						"GetFlightsPocEnabled"
+					],
+					"query": [
+						{
+							"key": "userName",
+							"value": "{{userName}}"
+						},
+						{
+							"key": "terminalId",
+							"value": "{{terminalId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreatePassengerBcbp",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"/**I store the answer in JsonDta */\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"/**valid if the status code is 200*/\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"/**validate that the response code is the one I am waiting for in the js for the current iteration*/\r",
+							"pm.test(\"Checking response code\", () => {\r",
+							"    pm.expect(jsonData.code.toString()).to.eq(data.codeBcbp.toString());\r",
+							"});\r",
+							"/**validate that the response message is the one I am expecting in the js for the current iteration*/\r",
+							"pm.test(\"Checking response message\", () => {\r",
+							"    pm.expect(jsonData.message.toString()).to.eq(data.messageBcbp.toString());\r",
+							"});\r",
+							"/**Validate that the response contains value for guid*/\r",
+							"pm.test(\"Checking guid\", () => {\r",
+							"    pm.expect(jsonData.guid.length).to.be.greaterThan(0);\r",
+							"});\r",
+							"if (jsonData.code.toString() === \"0\") {\r",
+							"    /**Validate that the response contains value for data*/\r",
+							"    pm.test(\"Checking data\", () => {\r",
+							"        pm.expect(jsonData.data.length).to.be.greaterThan(0);\r",
+							"    });\r",
+							"}\r",
+							"\r",
+							"let date = new Date();\r",
+							"\r",
+							"//Consecutive to create unique VBTransactionId\r",
+							"pm.environment.set(\"VBTransactionId\", \"POC_\" + date.getTime());\r",
+							"pm.environment.set(\"VBTransactionId_Backup\", \"POC_\" + date.getTime());\r",
+							"\r",
+							"/**If the passenger type is crew create the bcbp for this passenger*/\r",
+							"if (data.passengerType === \"Tripulacion\") {\r",
+							"    postman.setNextRequest(\"InsertCrewPassenger\");\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"/**I assign the values to the parameters of the url from the json file*/\r",
+							"const keys = Object.keys(data);\r",
+							"keys.map((key) => {\r",
+							"    pm.environment.set(key, data[key]);\r",
+							"})\r",
+							"pm.environment.unset(\"_comentario\");\r",
+							"pm.environment.unset(\"index\");\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{easypoc.token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "accept",
+						"value": "application/json"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 Edg/87.0.664.66"
+					},
+					{
+						"key": "Referer",
+						"value": "http://easypoc.dev.aic.carrasco.aero/swagger/index.html"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "es,es-ES;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json; charset=utf-8",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{easypoc.url}}/api/Bcbp/CreatePassengerBcbp?userName={{userName}}&name={{name}}&lastName={{lastName}}&progTime={{progTime}}&destination={{destination}}&flightCode={{flightCode}}&seatCode={{seatCode}}&origin={{origin}}&passengerType={{passengerType}}&stdaJul={{stdaJul}}",
+					"host": [
+						"{{easypoc.url}}"
+					],
+					"path": [
+						"api",
+						"Bcbp",
+						"CreatePassengerBcbp"
+					],
+					"query": [
+						{
+							"key": "userName",
+							"value": "{{userName}}"
+						},
+						{
+							"key": "name",
+							"value": "{{name}}"
+						},
+						{
+							"key": "lastName",
+							"value": "{{lastName}}"
+						},
+						{
+							"key": "progTime",
+							"value": "{{progTime}}"
+						},
+						{
+							"key": "destination",
+							"value": "{{destination}}"
+						},
+						{
+							"key": "flightCode",
+							"value": "{{flightCode}}"
+						},
+						{
+							"key": "seatCode",
+							"value": "{{seatCode}}"
+						},
+						{
+							"key": "origin",
+							"value": "{{origin}}"
+						},
+						{
+							"key": "passengerType",
+							"value": "{{passengerType}}"
+						},
+						{
+							"key": "stdaJul",
+							"value": "{{stdaJul}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

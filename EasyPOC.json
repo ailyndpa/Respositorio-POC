@@ -7,8 +7,14 @@
        "name": "Test1",
        "lastName": "Código null",
        "flightCode": null,
+       "seatCode": "A",
        "messageBcbp":"El código de vuelo es nulo o vacío",
-       "codeBcbp": "2017"
+       "codeBcbp": "2017",
+       "seatLetter": "A",
+       "countToGenerate": "1",
+       "messageBatchBcbp": "El código de vuelo es nulo o vacío",
+       "codeBatchBcbp": "2017"
+       
      },
      {
        "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp para flightCode vacío",
@@ -18,8 +24,13 @@
        "name": "Test2",
        "lastName": "Código vacío",
        "flightCode": "",
+       "seatCode": "A",
        "messageBcbp":"El código de vuelo es nulo o vacío",
-       "codeBcbp": "2017"
+       "codeBcbp": "2017",
+       "seatLetter": "B",
+       "countToGenerate": "1",
+       "messageBatchBcbp": "El código de vuelo es nulo o vacío",
+       "codeBatchBcbp": "2017"
      },
      {
        "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp && Check/ValidationBcbp validando messageValidationBCBP y codeValidationBCBP para flightCode numérico",
@@ -29,6 +40,7 @@
        "name": "Test3",
        "lastName": "Código numérico",
        "flightCode": "12345678",
+       "seatCode": "",
        "messageBcbp":"El BCBP del pasajero se creó con éxito",
        "codeBcbp": "0",
        "runwayId": "POC_1",
@@ -37,7 +49,12 @@
        "messageValidationBCBP": "El vuelo no existe",
        "codeValidationBCBP":"11",
        "messageCheckin":"El vuelo no existe",
-       "codeCheckin":"11"       
+       "codeCheckin":"11",
+       "seatLetter": "C",
+       "countToGenerate": "1",
+       "messageBatchBcbp": "El vuelo no existe",
+       "codeBatchBcbp": "11"
+       
      },
      {
        "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp && Check/ValidationBcbp validando messageValidationBCBP y codeValidationBCBP && Check/CheckIn validando messageCheckin y codeCheckin para flightCode alfabético",
@@ -47,6 +64,7 @@
        "name": "Test4",
        "lastName": "Código alfabético",
        "flightCode": "abcdefgh",
+       "seatCode": "",
        "messageBcbp":"El BCBP del pasajero se creó con éxito",
        "codeBcbp": "0",
        "runwayId": "POC_1",
@@ -55,7 +73,12 @@
        "messageValidationBCBP": "El vuelo no existe",
        "codeValidationBCBP":"11",
        "messageCheckin":"El vuelo no existe",
-       "codeCheckin":"11"       
+       "codeCheckin":"11",
+       "seatLetter": "D",
+       "countToGenerate": "1",
+       "messageBatchBcbp": "El vuelo no existe",
+       "codeBatchBcbp": "11"
+       
      },
      {
        "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp && Check/ValidationBcbp validando messageValidationBCBP y codeValidationBCBP para flightCode con caracteres especiales",
@@ -65,6 +88,7 @@
        "name": "Test5",
        "lastName": "Código caract esp",
        "flightCode": "/*-¡!$%/",
+       "seatCode": "",
        "messageBcbp":"El BCBP del pasajero se creó con éxito",
        "codeBcbp": "0",
        "runwayId": "POC_1",
@@ -73,7 +97,11 @@
        "messageValidationBCBP": "El vuelo no existe",
        "codeValidationBCBP":"11",
        "messageCheckin":"El vuelo no existe",
-       "codeCheckin":"11"       
+       "codeCheckin":"11",
+       "seatLetter": "E",
+       "countToGenerate": "1",
+       "messageBatchBcbp": "El vuelo no existe",
+       "codeBatchBcbp": "11"       
      },
      {
        "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp para campo flightCode con una longitud inferior a 8",
@@ -83,8 +111,13 @@
        "name": "Test6",
        "lastName": "Código menor",
        "flightCode": "MVD1234",
+       "seatCode": "",
        "messageBcbp":"El Código de vuelo tiene una longitud igual a 8",
-       "codeBcbp": "2022"
+       "codeBcbp": "2022",
+       "seatLetter": "F",
+       "countToGenerate": "1",
+       "messageBatchBcbp": "El Código de vuelo tiene una longitud igual a 8",
+       "codeBatchBcbp": "2022"       
      },
      {
        "_comentario": "Check/ValidationBcbp && Check/CheckIn validando messageValidationBCBP, codeValidationBCBP, messageCheckin y codeCheckin  para campo flightCode con una longitud inferior a 8 (Tarjeta de embarque falsa)",
@@ -103,7 +136,11 @@
        "messageValidationBCBP": "El BCBP es inválido",
        "codeValidationBCBP":"26",
        "messageCheckin":"El BCBP es inválido",
-       "codeCheckin":"26"       
+       "codeCheckin":"26",
+       "seatLetter": "G",
+       "countToGenerate": "1",
+       "messageBatchBcbp": "El vuelo no existe",
+       "codeBatchBcbp": "11"
      },
      {
        "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp para campo flightCode con una longitud superior a 8",
@@ -114,7 +151,11 @@
        "lastName": "Código mayor",
        "flightCode": "MVD123409",
        "messageBcbp":"El Código de vuelo tiene una longitud igual a 8",
-       "codeBcbp": "2022"      
+       "codeBcbp": "2022",
+       "seatLetter": "H",
+       "countToGenerate": "1",
+       "messageBatchBcbp": "El Código de vuelo tiene una longitud igual a 8",
+       "codeBatchBcbp": "2022"
      },
      {
        "_comentario": "Check/ValidationBcbp && Check/CheckIn validando messageValidationBCBP, codeValidationBCBP, messageCheckin y codeCheckin  para campo flightCode con una longitud superior a 8 (Tarjeta de embarque falsa)",
@@ -125,8 +166,6 @@
        "lastName": "flightCode falso2",
        "flightCode": "MVD1234-",
        "seatCode": "1B",
-       "messageFlightPOC":"Transacción ejecutada con éxito",
-       "codeFlightPOC": "0",
        "messageBcbp":"El BCBP del pasajero se creó con éxito",
        "codeBcbp": "0",
        "runwayId": "POC_1",
@@ -135,7 +174,11 @@
        "messageValidationBCBP": "El vuelo no existe",
        "codeValidationBCBP":"11",
        "messageCheckin":"El vuelo no existe",
-       "codeCheckin":"11"       
+       "codeCheckin":"11",
+       "seatLetter": "I",
+       "countToGenerate": "1",
+       "messageBatchBcbp": "El vuelo no existe",
+       "codeBatchBcbp": "11"
      },
      {
        "_comentario": "Check/ValidationBcbp && Check/CheckIn validando messageValidationBCBP, codeValidationBCBP, messageCheckin y codeCheckin para flightCode no existente",
@@ -145,8 +188,6 @@
        "name": "Test10",
        "lastName": "código inexist",
        "flightCode": " LA1234 ",
-       "messageFlightPOC":"Transacción ejecutada con éxito",
-       "codeFlightPOC": "0",
        "messageBcbp":"El BCBP del pasajero se creó con éxito",
        "codeBcbp": "0",
        "runwayId": "POC_1",
@@ -155,37 +196,147 @@
        "messageValidationBCBP": "El vuelo no existe",
        "codeValidationBCBP":"11",
        "messageCheckin":"El vuelo no existe",
-       "codeCheckin":"11"       
+       "codeCheckin":"11",
+       "seatLetter": "J",
+       "countToGenerate": "1",
+       "messageBatchBcbp": "El vuelo no existe",
+       "codeBatchBcbp": "11"
      },
      {
-       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp para seatCode nulo",
+       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp OK && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination null",
        "index": 11,
        "userName": "QA",
        "terminalId": "1",                                                                  
        "name": "Test11",
+       "lastName": "Destino nulo",
+       "seatCode": "1",
+       "passengerType": "Pasajero_Mayor",
+       "messageBcbp":"El BCBP del pasajero se creó con éxito",
+       "codeBcbp": "0",
+       "seatLetter": "K",
+       "countToGenerate": "1",
+       "destination": null,
+       "messageBatchBcbp": "Destino de vuelo nulo o vacío",
+       "codeBatchBcbp": "2023"
+     },
+     {
+       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp OK && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination vacío",
+       "index": 12,
+       "userName": "QA",
+       "terminalId": "1",                                                                  
+       "name": "Test12",
+       "lastName": "Destino vacío",
+       "seatCode": 1,
+       "passengerType": "Pasajero_Mayor",
+       "messageBcbp":"El BCBP del pasajero se creó con éxito",
+       "codeBcbp": "0",
+       "seatLetter": "K",
+       "countToGenerate": "1",
+       "destination": "",
+       "messageBatchBcbp": "Destino de vuelo nulo o vacío",
+       "codeBatchBcbp": "2023"
+     },
+     {
+       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp OK && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination formado por caracteres especiales",
+       "index": 13,
+       "userName": "QA",
+       "terminalId": "1",                                                                  
+       "name": "Test13",
+       "lastName": "Destino caracter",
+       "seatCode": 1,
+       "passengerType": "Pasajero_Mayor",
+       "messageBcbp":"El BCBP del pasajero se creó con éxito",
+       "codeBcbp": "0",
+       "seatLetter": "K",
+       "countToGenerate": "1",
+       "destination": "/*-",
+       "messageBatchBcbp": "Destino de vuelo no acepta caracteres especiales",
+       "codeBatchBcbp": "2013"
+     },
+     {
+       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp OK && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination formado por números",
+       "index": 14,
+       "userName": "QA",
+       "terminalId": "1",                                                                  
+       "name": "Test14",
+       "lastName": "Destino numérico",
+       "seatCode": 1,
+       "passengerType": "Pasajero_Mayor",
+      "messageBcbp":"El BCBP del pasajero se creó con éxito",
+       "codeBcbp": "0",
+       "seatLetter": "K",
+       "countToGenerate": "1",
+       "destination": "/*-",
+       "messageBatchBcbp": "Destino del vuelo contiene dígitos inválidos",
+       "codeBatchBcbp": "2024"
+     },
+     {
+       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp OK && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination menor que 3",
+       "index": 15,
+       "userName": "QA",
+       "terminalId": "1",                                                                  
+       "name": "Test15",
+       "lastName": "Destino menor",
+       "seatCode": 1,
+       "passengerType": "Pasajero_Mayor",
+       "messageBcbp":"El BCBP del pasajero se creó con éxito",
+       "codeBcbp": "0",
+       "seatLetter": "K",
+       "countToGenerate": "1",
+       "destination": "MV",
+       "messageBatchBcbp": "Destino del vuelo tiene largo inválido",
+       "codeBatchBcbp": "2025"
+     }, 
+     {
+       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp OK && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination mayor que 3",
+       "index": 16,
+       "userName": "QA",
+       "terminalId": "1",                                                                  
+       "name": "Test16",
+       "lastName": "Destino mayor",
+       "seatCode": 1,
+       "passengerType": "Pasajero_Mayor",
+       "messageBcbp":"El BCBP del pasajero se creó con éxito",
+       "codeBcbp": "0",
+       "seatLetter": "K",
+       "countToGenerate": "1",
+       "destination": "MVDF",
+       "messageBatchBcbp": "Destino del vuelo tiene largo inválido",
+       "codeBatchBcbp": "2025"
+     },
+     {
+       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp para seatCode nulo",
+       "index": 17,
+       "userName": "QA",
+       "terminalId": "1",                                                                  
+       "name": "Test17",
        "lastName": "Asiento nulo",
        "seatCode": null,
        "passengerType": "Pasajero_Mayor",
-       "messageFlightPOC":"Transacción ejecutada con éxito",
-       "codeFlightPOC": "0",
-       "messageBcbp":"El código de asiento es nulo",
-       "codeBcbp": "2015"
+       "messageBcbp":"El BCBP del pasajero se creó con éxito",
+       "codeBcbp": "0",
+       "seatLetter": null,
+       "countToGenerate": "1",
+       "messageBatchBcbp": "Letra de asiento nula o vacía",
+       "codeBatchBcbp": "2029"
      },
      {
-       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp para seatCode con una longitud superior a 4",
+       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp para seatCode con una longitud superior a 4 && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination vacío",
        "index": 12,
        "userName": "QA",
        "terminalId": "1",                                                                  
        "name": "Test12",
        "lastName": "Asiento superior",
        "seatCode": "12345",
-       "messageFlightPOC":"Transacción ejecutada con éxito",
-       "codeFlightPOC": "0",
        "messageBcbp":"Código de asiento excede el largo válido",
-       "codeBcbp": "607"
+       "codeBcbp": "607",
+       "seatLetter": "L",
+       "destination": "",
+       "messageBatchBcbp": "Destino de vuelo nulo o vacío",
+       "codeBatchBcbp": "2023"
      },
      {
-       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp para seatCode con una longitud inferior a 4 para evaluar que el endpoint lo rellena con 0 delante && Check/ValidationBcbp validando messageValidationBCBP y codeValidationBCBP && Check/CheckIn validando messageCheckin y codeCheckin && ConfirmEntry validando messageConfirmEntry y codeConfirmEntry para confirmTrx igual 0",
+       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp para seatCode con una longitud inferior a 4 para evaluar que el endpoint lo rellena con 0 delante && Check/ValidationBcbp validando messageValidationBCBP y codeValidationBCBP && Check/CheckIn validando messageCheckin y codeCheckin && ConfirmEntry validando messageConfirmEntry y codeConfirmEntry para confirmTrx igual 0 && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para seatLetter null",
        "index": 13,
        "userName": "QA",
        "terminalId": "1",                                                                  
@@ -193,8 +344,6 @@
        "lastName": "Asiento inferior",
        "seatCode": "123",
        "passengerType": "Pasajero_Mayor",
-       "messageFlightPOC":"Transacción ejecutada con éxito",
-       "codeFlightPOC": "0",
        "messageBcbp":"El BCBP del pasajero se creó con éxito",
        "codeBcbp": "0",
        "onlyBcbpCheck": false,
@@ -207,7 +356,10 @@
        "confirmTrx": "0",
        "wu": "1",
        "messageConfirmEntry": "No se detectó al pasajero o el pasajero no ingresó",
-       "codeConfirmEntry": "2"
+       "codeConfirmEntry": "2",
+       "seatLetter": null,
+       "messageBatchBcbp": "Letra de asiento nula o vacía",
+       "codeBatchBcbp": "2007"
      },
      {
        "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp para seatCode alfabético",
@@ -217,23 +369,21 @@
        "name": "Test14",
        "lastName": "Asiento alfabético",
        "seatCode": "asdf",
-       "messageFlightPOC":"Transacción ejecutada con éxito",
-       "codeFlightPOC": "0",
        "messageBcbp":"El número de asiento es inválido",
-       "codeBcbp": "613"
+       "codeBcbp": "613",
+       "seatLetter": "N"
       },
      {
        "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp para seatCode con caracteres especiales",
        "index": 15,
        "userName": "QA",
        "terminalId": "1",                                                                  
-       "name": "Test23",
+       "name": "Test15",
        "lastName": "Asiento caract",
        "seatCode": "!$%!",
-       "messageFlightPOC":"Transacción ejecutada con éxito",
-       "codeFlightPOC": "0",
        "messageBcbp":"El número de asiento es inválido",
-       "codeBcbp": "613"
+       "codeBcbp": "613",
+       "seatLetter": "Ñ"
      },
      {
        "_comentario": "Check/CheckIn validando messageCheckin y codeCheckin && ConfirmEntry validando messageConfirmEntry y codeConfirmEntry para seatCode igual al de un pasajero que no confirma checkin",
@@ -244,8 +394,6 @@
        "lastName": "Mismo asiento",
        "seatCode": "123",
        "passengerType": "Pasajero_Infante",
-       "messageFlightPOC":"Transacción ejecutada con éxito",
-       "codeFlightPOC": "0",
        "messageBcbp":"El BCBP del pasajero se creó con éxito",
        "codeBcbp": "0",
        "onlyBcbpCheck": false,

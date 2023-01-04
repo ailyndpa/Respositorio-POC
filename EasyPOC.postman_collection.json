@@ -407,6 +407,121 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "CreateBatchBcbp",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const Keys = Object.keys(data);\r",
+							"Keys.map(keys => (\r",
+							"    pm.environment.set(keys, data[keys])\r",
+							"));\r",
+							"pm.environment.unset(\"_comentario\");\r",
+							"pm.environment.unset(\"index\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"/**I store the answer in JsonDta */\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"console.log('jsonData', jsonData)\r",
+							"console.log('data.codeBatchBcbp', data.codeBatchBcbp)\r",
+							"console.log('data.messageBatchBcbp', data.messageBatchBcbp)\r",
+							"\r",
+							"/**valid if the status code is 200*/\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"/**validate that the response code is the one I am waiting for in the js for the current iteration*/\r",
+							"pm.test(\"Checking response code\", () => {\r",
+							"    pm.expect(jsonData.code.toString()).to.eq(data.codeBatchBcbp.toString());\r",
+							"});\r",
+							"/**validate that the response message is the one I am expecting in the js for the current iteration*/\r",
+							"pm.test(\"Checking response message\", () => {\r",
+							"    pm.expect(jsonData.message.toString()).to.eq(data.messageBatchBcbp.toString());\r",
+							"});\r",
+							"/**Validate that the response contains value for guid*/\r",
+							"pm.test(\"Checking guid\", () => {\r",
+							"    pm.expect(jsonData.guid.length).to.be.greaterThan(0);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{easypoc.token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{easypoc.url}}/api/Bcbp/CreateBatchBcbp?username={{userName}}&progTime={{progTime}}&flightCode={{flightCode}}&destination={{destination}}&origin={{origin}}&seatLetter={{seatLetter}}&countToGenerate={{countToGenerate}}&passengerType={{passengerType}}&stdaJulOptionalParam={{stdaJul}}",
+					"host": [
+						"{{easypoc.url}}"
+					],
+					"path": [
+						"api",
+						"Bcbp",
+						"CreateBatchBcbp"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "{{userName}}"
+						},
+						{
+							"key": "progTime",
+							"value": "{{progTime}}"
+						},
+						{
+							"key": "flightCode",
+							"value": "{{flightCode}}"
+						},
+						{
+							"key": "destination",
+							"value": "{{destination}}"
+						},
+						{
+							"key": "origin",
+							"value": "{{origin}}"
+						},
+						{
+							"key": "seatLetter",
+							"value": "{{seatLetter}}"
+						},
+						{
+							"key": "countToGenerate",
+							"value": "{{countToGenerate}}"
+						},
+						{
+							"key": "passengerType",
+							"value": "{{passengerType}}"
+						},
+						{
+							"key": "stdaJulOptionalParam",
+							"value": "{{stdaJul}}"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

@@ -37,12 +37,6 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"/**I assign the values to the parameters of the url from the json file*/\r",
-							"/*const keys = Object.keys(data);\r",
-							"keys.map((key) => {\r",
-							"    pm.environment.set(key, data[key]);\r",
-							"})*/\r",
-							"\r",
 							""
 						],
 						"type": "text/javascript"
@@ -126,7 +120,7 @@
 							"    pm.environment.set(\"moveType\", jsonData.data[numberFlight].moveType);\r",
 							"    pm.environment.set(\"iataCode\", jsonData.data[numberFlight].iataCode);\r",
 							"    pm.environment.set(\"flightNumber\", jsonData.data[numberFlight].flightNumber);\r",
-							"    pm.environment.set(\"stdaJul\", jsonData.data[numberFlight].stdaJul);\r",
+							"    pm.environment.set(\"stdaJulOptionalParam\", jsonData.data[numberFlight].stdaJul);\r",
 							"    pm.environment.set(\"atda\", jsonData.data[numberFlight].atda);\r",
 							"    let unixTimestamp = jsonData.data[numberFlight].stda;\r",
 							"\r",
@@ -150,15 +144,15 @@
 							"    let docID = \"CI\" + (new Date() - 1615304326);\r",
 							"    pm.environment.set(\"documentID\", docID);\r",
 							"    /**A bcbp is passed from json file to validate */\r",
-							"    /*if (data?.validBcbp) {\r",
-							"        postman.setNextRequest(\"Check/ValidationBcbp\");\r",
+							"    if (data?.validBcbp) {\r",
+							"        postman.setNextRequest(\"Check/CheckIn\");\r",
 							"    }/**Passed the bcbp of a passenger who does not exist*/\r",
 							"    /*else if (data?.checkOut) {\r",
 							"        pm.environment.set(\"bcbp\", data.bcbp)\r",
 							"        postman.setNextRequest(\"Check/CheckOut\");\r",
-							"    } else {\r",
+							"    } */else {\r",
 							"        postman.setNextRequest(\"CreatePassengerBcbp\");\r",
-							"    }*/\r",
+							"    }\r",
 							"\r",
 							"} else {\r",
 							"    postman.setNextRequest(null);\r",
@@ -287,10 +281,39 @@
 							"pm.environment.set(\"VBTransactionId\", \"POC_\" + date.getTime());\r",
 							"pm.environment.set(\"VBTransactionId_Backup\", \"POC_\" + date.getTime());\r",
 							"\r",
+							"\r",
 							"/**If the passenger type is crew create the bcbp for this passenger*/\r",
-							"if (data.passengerType === \"Tripulacion\") {\r",
+							"/*if (data.passengerType === \"Tripulacion\") {\r",
 							"    postman.setNextRequest(\"InsertCrewPassenger\");\r",
-							"}"
+							"} else {*/\r",
+							"/**I remove characters from the flight code to evaluate the behavior of the e-Gate with less than 8 characters*/\r",
+							"if (data.lastName === \"flightCode falso1\") {\r",
+							"    let boarding = jsonData.data.split('-');\r",
+							"    let cad1 = boarding[0].toString();\r",
+							"    let cad2 = boarding[1].toString();\r",
+							"    boarding_false = cad1.concat(cad2);\r",
+							"    pm.environment.set(\"boarding_false\", boarding_false);\r",
+							"}/**I add flight code characters to evaluate the behavior of the e-Gate with more than 8 characters*/\r",
+							"else if (data.lastName === \"flightCode falso2\") {\r",
+							"    boarding = jsonData.data.split('-');\r",
+							"    caracter = \"56\";\r",
+							"    cad1 = boarding[0].toString();\r",
+							"    cad2 = boarding[1].toString();\r",
+							"    cad1Caracter = cad1.concat(caracter);\r",
+							"    boarding_false = cad1Caracter.concat(cad2);\r",
+							"    pm.environment.set(\"boarding_false\", boarding_false);\r",
+							"}/**I replace the M in the bcbp with a space to evaluate the behavior of the e-Gate*/\r",
+							"else if (data.lastName === \"BCBP sin M\") {\r",
+							"    boarding = jsonData.data.replace(\"M\", \" \");\r",
+							"    pm.environment.set(\"boarding_false\", boarding);\r",
+							"}\r",
+							"else {\r",
+							"    pm.environment.set(\"bcbp\", jsonData.data);\r",
+							"    pm.environment.set(\"bcbp_Backup\", jsonData.data);\r",
+							"    /**Only passed to the Check/ValidationBcbp service when data exists in data */\r",
+							"    /*((jsonData.data) !== undefined) ? postman.setNextRequest(\"Check/ValidationBcbp\") : postman.setNextRequest(null)*/\r",
+							"}\r",
+							"//}"
 						],
 						"type": "text/javascript"
 					}
@@ -353,7 +376,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{easypoc.url}}/api/Bcbp/CreatePassengerBcbp?userName={{userName}}&name={{name}}&lastName={{lastName}}&progTime={{progTime}}&destination={{destination}}&flightCode={{flightCode}}&seatCode={{seatCode}}&origin={{origin}}&passengerType={{passengerType}}&stdaJul={{stdaJul}}",
+					"raw": "{{easypoc.url}}/api/Bcbp/CreatePassengerBcbp?userName={{userName}}&name={{name}}&lastName={{lastName}}&progTime={{progTime}}&destination={{destination}}&flightCode={{flightCode}}&seatCode={{seatCode}}&origin={{origin}}&passengerType={{passengerType}}&stdaJulOptionalParam={{stdaJulOptionalParam}}",
 					"host": [
 						"{{easypoc.url}}"
 					],
@@ -400,8 +423,8 @@
 							"value": "{{passengerType}}"
 						},
 						{
-							"key": "stdaJul",
-							"value": "{{stdaJul}}"
+							"key": "stdaJulOptionalParam",
+							"value": "{{stdaJulOptionalParam}}"
 						}
 					]
 				}
@@ -440,7 +463,6 @@
 							"pm.test(\"Status code is 200\", () => {\r",
 							"    pm.response.to.have.status(200);\r",
 							"});\r",
-							"\r",
 							"/**validate that the response code is the one I am waiting for in the js for the current iteration*/\r",
 							"pm.test(\"Checking response code\", () => {\r",
 							"    pm.expect(jsonData.code.toString()).to.eq(data.codeBatchBcbp.toString());\r",
@@ -452,7 +474,18 @@
 							"/**Validate that the response contains value for guid*/\r",
 							"pm.test(\"Checking guid\", () => {\r",
 							"    pm.expect(jsonData.guid.length).to.be.greaterThan(0);\r",
-							"});"
+							"});\r",
+							"/**Only verifies that the specified amount of bcbp is generated when it is an integer value*/\r",
+							"if (jsonData.code === 0 && Number.isInteger(data.countToGenerate)) {\r",
+							"    pm.test(\"Verify that the specified amount of bcbp is generated\", () => {\r",
+							"        pm.expect(jsonData.data.length.toString()).to.be.equal(data.countToGenerate.toString());\r",
+							"    });\r",
+							"}\r",
+							"if(jsonData.code != 0){\r",
+							"    postman.setNextRequest(null)\r",
+							"}\r",
+							"\r",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -472,7 +505,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{easypoc.url}}/api/Bcbp/CreateBatchBcbp?username={{userName}}&progTime={{progTime}}&flightCode={{flightCode}}&destination={{destination}}&origin={{origin}}&seatLetter={{seatLetter}}&countToGenerate={{countToGenerate}}&passengerType={{passengerType}}&stdaJulOptionalParam={{stdaJul}}",
+					"raw": "{{easypoc.url}}/api/Bcbp/CreateBatchBcbp?username={{userName}}&progTime={{progTime}}&flightCode={{flightCode}}&destination={{destination}}&origin={{origin}}&seatLetter={{seatLetter}}&countToGenerate={{countToGenerate}}&passengerType={{passengerType}}&stdaJulOptionalParam={{stdaJulOptionalParam}}",
 					"host": [
 						"{{easypoc.url}}"
 					],
@@ -516,7 +549,172 @@
 						},
 						{
 							"key": "stdaJulOptionalParam",
-							"value": "{{stdaJul}}"
+							"value": "{{stdaJulOptionalParam}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check/CheckIn",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"/**I store the answer in JsonDta*/\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"/**I store the transaction id for later confirmation. */\r",
+							"pm.environment.set('idTransactionEP', jsonData.idTransactionEP);\r",
+							"pm.environment.set('idTransactionEP_Backup', jsonData.idTransactionEP);\r",
+							"\r",
+							"/**valid if the status code is 200*/\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"/**validate that the response code is the one I am waiting for in the js for the current iteration*/\r",
+							"pm.test(\"Checking response code\", () => {\r",
+							"    pm.expect(jsonData.code.toString()).to.eq(data.codeCheckin.toString());\r",
+							"});\r",
+							"/**validate that the response message is the one I am expecting in the js for the current iteration*/\r",
+							"pm.test(\"Checking response message\", () => {\r",
+							"    pm.expect(jsonData.message.toString()).to.eq(data.messageCheckin.toString());\r",
+							"});\r",
+							"if (data.codeCheckin.toString() == \"0\") {\r",
+							"    pm.test(\"Code is 0\", () => {\r",
+							"        pm.expect(jsonData.code).to.eq(0)\r",
+							"    })\r",
+							"}\r",
+							"/**Only the ConfirmEntry request for code 0 will be executed.*/\r",
+							"if (jsonData.code.toString() == \"0\" && data.codeCheckin.toString() == \"0\") {\r",
+							"    postman.setNextRequest(\"ConfirmEntry\")\r",
+							"}/**Disembarks passenger */ \r",
+							"else if (!!data.disembark) {\r",
+							"    postman.setNextRequest(\"Check/CheckOut\")\r",
+							"} else {\r",
+							"    postman.setNextRequest(null)\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"/**I assign the values to the parameters of the url from the json file*/\r",
+							"const keys = Object.keys(data);\r",
+							"keys.map((key) => {\r",
+							"    pm.environment.set(key, data[key]);\r",
+							"})\r",
+							"pm.environment.unset(\"_comentario\");\r",
+							"pm.environment.unset(\"index\");\r",
+							"\r",
+							"/**Correct VBTransactionId is passed to validate the null runwayId field */\r",
+							"if (!!data.VBTransactionId_Restore) {\r",
+							"    pm.environment.set(\"VBTransactionId\", pm.environment.get(\"VBTransactionId_Backup\"))\r",
+							"}\r",
+							"if (!!data.bcbp_Restore) {\r",
+							"    pm.environment.set(\"bcbp\", pm.environment.get(\"bcbp_Backup\"))\r",
+							"}\r",
+							"if (data.lastName === \"flightCode falso1\" || data.lastName === \"flightCode falso2\" || data.lastName === \"BCBP sin M\") {\r",
+							"    pm.environment.set(\"bcbp\", pm.environment.get(\"boarding_false\"));\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{easypoc.token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 Edg/87.0.664.66"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json-patch+json"
+					},
+					{
+						"key": "Origin",
+						"value": "http://easypoc.dev.aic.carrasco.aero"
+					},
+					{
+						"key": "Referer",
+						"value": "http://easypoc.dev.aic.carrasco.aero/swagger/index.html"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "es,es-ES;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"photoTypeId\": 0,\r\n  \"photo\": \"string\",\r\n  \"description\": \"string\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{easypoc.url}}/api/Check/CheckIn?VBTransactionId={{VBTransactionId}}&runwayId={{runwayId}}&bcbp={{bcbp}}&passengerType={{passengerType}}",
+					"host": [
+						"{{easypoc.url}}"
+					],
+					"path": [
+						"api",
+						"Check",
+						"CheckIn"
+					],
+					"query": [
+						{
+							"key": "VBTransactionId",
+							"value": "{{VBTransactionId}}",
+							"description": "id del sistema que invoca"
+						},
+						{
+							"key": "runwayId",
+							"value": "{{runwayId}}",
+							"description": "id de la pasarela o puesto manual"
+						},
+						{
+							"key": "bcbp",
+							"value": "{{bcbp}}",
+							"description": "boarding leido del pasajero\nM1DOE/JOHN            EXYZ123 MVDAEPAR 1381 319F035A0001 100"
+						},
+						{
+							"key": "passengerType",
+							"value": "{{passengerType}}",
+							"description": "Tipo de pasajero"
+						},
+						{
+							"key": "vipCode",
+							"value": "{{vipCode}}",
+							"description": "Código vip leido si existiera (opcional) del pax",
+							"disabled": true
 						}
 					]
 				}

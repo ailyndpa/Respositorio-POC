@@ -105,7 +105,7 @@
 						"exec": [
 							"/**I store the answer in JsonDta */\r",
 							"const jsonData = pm.response.json();\r",
-							"let numberFlight = 0;\r",
+							"let numberFlight = 4;\r",
 							"\r",
 							"/**I count the number of flights that exist */\r",
 							"const flights = jsonData.data.length;\r",
@@ -145,12 +145,12 @@
 							"    pm.environment.set(\"documentID\", docID);\r",
 							"    /**A bcbp is passed from json file to validate */\r",
 							"    if (data?.validBcbp) {\r",
-							"        postman.setNextRequest(\"Check/CheckIn\");\r",
+							"        postman.setNextRequest(\"Check/ValidationBcbp\");\r",
 							"    }/**Passed the bcbp of a passenger who does not exist*/\r",
-							"    /*else if (data?.checkOut) {\r",
+							"    else if (data?.checkOut) {\r",
 							"        pm.environment.set(\"bcbp\", data.bcbp)\r",
 							"        postman.setNextRequest(\"Check/CheckOut\");\r",
-							"    } */else {\r",
+							"    } else {\r",
 							"        postman.setNextRequest(\"CreatePassengerBcbp\");\r",
 							"    }\r",
 							"\r",
@@ -255,7 +255,6 @@
 							"pm.test(\"Status code is 200\", () => {\r",
 							"    pm.response.to.have.status(200);\r",
 							"});\r",
-							"\r",
 							"/**validate that the response code is the one I am waiting for in the js for the current iteration*/\r",
 							"pm.test(\"Checking response code\", () => {\r",
 							"    pm.expect(jsonData.code.toString()).to.eq(data.codeBcbp.toString());\r",
@@ -275,6 +274,8 @@
 							"    });\r",
 							"}\r",
 							"\r",
+							"pm.environment.set('codeBCBP', jsonData.code)\r",
+							"\r",
 							"let date = new Date();\r",
 							"\r",
 							"//Consecutive to create unique VBTransactionId\r",
@@ -283,37 +284,39 @@
 							"\r",
 							"\r",
 							"/**If the passenger type is crew create the bcbp for this passenger*/\r",
-							"/*if (data.passengerType === \"Tripulacion\") {\r",
+							"if (data.passengerType === \"Tripulacion\") {\r",
 							"    postman.setNextRequest(\"InsertCrewPassenger\");\r",
-							"} else {*/\r",
-							"/**I remove characters from the flight code to evaluate the behavior of the e-Gate with less than 8 characters*/\r",
-							"if (data.lastName === \"flightCode falso1\") {\r",
-							"    let boarding = jsonData.data.split('-');\r",
-							"    let cad1 = boarding[0].toString();\r",
-							"    let cad2 = boarding[1].toString();\r",
-							"    boarding_false = cad1.concat(cad2);\r",
-							"    pm.environment.set(\"boarding_false\", boarding_false);\r",
-							"}/**I add flight code characters to evaluate the behavior of the e-Gate with more than 8 characters*/\r",
-							"else if (data.lastName === \"flightCode falso2\") {\r",
-							"    boarding = jsonData.data.split('-');\r",
-							"    caracter = \"56\";\r",
-							"    cad1 = boarding[0].toString();\r",
-							"    cad2 = boarding[1].toString();\r",
-							"    cad1Caracter = cad1.concat(caracter);\r",
-							"    boarding_false = cad1Caracter.concat(cad2);\r",
-							"    pm.environment.set(\"boarding_false\", boarding_false);\r",
-							"}/**I replace the M in the bcbp with a space to evaluate the behavior of the e-Gate*/\r",
-							"else if (data.lastName === \"BCBP sin M\") {\r",
-							"    boarding = jsonData.data.replace(\"M\", \" \");\r",
-							"    pm.environment.set(\"boarding_false\", boarding);\r",
+							"} else {\r",
+							"    /**I remove characters from the flight code to evaluate the behavior of the e-Gate with less than 8 characters*/\r",
+							"    if (data.lastName === \"flightCode falso1\") {\r",
+							"        let boarding = jsonData.data.split('-');\r",
+							"        let cad1 = boarding[0].toString();\r",
+							"        let cad2 = boarding[1].toString();\r",
+							"        boarding_false = cad1.concat(cad2);\r",
+							"        pm.environment.set(\"boarding_false\", boarding_false);\r",
+							"    }/**I add flight code characters to evaluate the behavior of the e-Gate with more than 8 characters*/\r",
+							"    else if (data.lastName === \"flightCode falso2\") {\r",
+							"        boarding = jsonData.data.split('-');\r",
+							"        caracter = \"56\";\r",
+							"        cad1 = boarding[0].toString();\r",
+							"        cad2 = boarding[1].toString();\r",
+							"        cad1Caracter = cad1.concat(caracter);\r",
+							"        boarding_false = cad1Caracter.concat(cad2);\r",
+							"        pm.environment.set(\"boarding_false\", boarding_false);\r",
+							"    }/**I replace the M in the bcbp with a space to evaluate the behavior of the e-Gate*/\r",
+							"    else if (data.lastName === \"BCBP sin M\") {\r",
+							"        boarding = jsonData.data.replace(\"M\", \" \");\r",
+							"        pm.environment.set(\"boarding_false\", boarding);\r",
+							"    }\r",
+							"    else {\r",
+							"        pm.environment.set(\"bcbp\", jsonData.data);\r",
+							"        pm.environment.set(\"bcbp_Backup\", jsonData.data);\r",
+							"        /**Only passed to the Check/ValidationBcbp service when data exists in data */\r",
+							"        /*((jsonData.data) !== undefined) ? postman.setNextRequest(\"Check/ValidationBcbp\") : postman.setNextRequest(null)*/\r",
+							"    }\r",
+							"    postman.setNextRequest(\"CreateBatchBcbp\");\r",
 							"}\r",
-							"else {\r",
-							"    pm.environment.set(\"bcbp\", jsonData.data);\r",
-							"    pm.environment.set(\"bcbp_Backup\", jsonData.data);\r",
-							"    /**Only passed to the Check/ValidationBcbp service when data exists in data */\r",
-							"    /*((jsonData.data) !== undefined) ? postman.setNextRequest(\"Check/ValidationBcbp\") : postman.setNextRequest(null)*/\r",
-							"}\r",
-							"//}"
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -432,6 +435,107 @@
 			"response": []
 		},
 		{
+			"name": "InsertCrewPassenger",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"/**I store the answer in JsonDta */\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"/**valid if the status code is 200*/\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"/**validate that the response code is the one I am waiting for in the js for the current iteration*/\r",
+							"pm.test(\"Checking response code\", () => {\r",
+							"    pm.expect(jsonData.code.toString()).to.eq(data.codeBcbp.toString());\r",
+							"});\r",
+							"/**validate that the response message is the one I am expecting in the js for the current iteration*/\r",
+							"pm.test(\"Checking response message\", () => {\r",
+							"    pm.expect(jsonData.message.toString()).to.eq(data.messageCrew.toString());\r",
+							"});\r",
+							"/*if (jsonData.code.toString() == \"0\") {*/\r",
+							"pm.test(\"Check the bcbp is created\", () => {\r",
+							"    pm.expect(jsonData.data.bcbp.length).to.be.gt(0);\r",
+							"});\r",
+							"\r",
+							"pm.environment.set(\"bcbp\", jsonData.data.bcbp);\r",
+							"pm.environment.set('codeBCBP', jsonData.code)\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{easypoc.token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "Authorization",
+						"value": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiU1VQRVJVU0VSIiwibmFtZSI6IkVBU1lBSVJQT1JUIiwidGltZSI6IjE2LzkvMjAyMCAxNjoxNzozNiIsImlzcyI6Imh0dHA6Ly9lYXN5cG9jLmRldi5haWMuY2FycmFzY28uYWVybzo4MCIsImF1ZCI6Imh0dHA6Ly9lYXN5cG9jLmRldi5haWMuY2FycmFzY28uYWVybzo4MCJ9.qgDA0DaVmXHnmdT_ECe6jCEe1qbUPIsFPJwQXsax4Mk",
+						"disabled": true
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36 Edg/89.0.774.68"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json-patch+json"
+					},
+					{
+						"key": "Origin",
+						"value": "http://easypoc.dev.aic.carrasco.aero"
+					},
+					{
+						"key": "Referer",
+						"value": "http://easypoc.dev.aic.carrasco.aero/swagger/index.html"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "es,es-ES;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{name}}\",\r\n    \"lastName\": \"{{lastName}}\",\r\n    \"flight\": {\r\n        \"iataCode\": \"{{iataCode}}\",\r\n        \"nrFlight\": \"{{flightNumber}}\",\r\n        \"stda\": \"{{stda}}\",\r\n        \"stdaJul\": \"{{stdaJulOptionalParam}}\",\r\n        \"destination\": \"{{destination}}\"\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "{{easypoc.url}}/api/Crew/InsertCrewPassenger",
+					"host": [
+						"{{easypoc.url}}"
+					],
+					"path": [
+						"api",
+						"Crew",
+						"InsertCrewPassenger"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "CreateBatchBcbp",
 			"event": [
 				{
@@ -455,10 +559,6 @@
 							"/**I store the answer in JsonDta */\r",
 							"let jsonData = pm.response.json();\r",
 							"\r",
-							"console.log('jsonData', jsonData)\r",
-							"console.log('data.codeBatchBcbp', data.codeBatchBcbp)\r",
-							"console.log('data.messageBatchBcbp', data.messageBatchBcbp)\r",
-							"\r",
 							"/**valid if the status code is 200*/\r",
 							"pm.test(\"Status code is 200\", () => {\r",
 							"    pm.response.to.have.status(200);\r",
@@ -481,11 +581,7 @@
 							"        pm.expect(jsonData.data.length.toString()).to.be.equal(data.countToGenerate.toString());\r",
 							"    });\r",
 							"}\r",
-							"if(jsonData.code != 0){\r",
-							"    postman.setNextRequest(null)\r",
-							"}\r",
-							"\r",
-							""
+							"(pm.environment.get(\"codeBCBP\") != 0) ? postman.setNextRequest(null) : postman.setNextRequest(\"Check/ValidationBcbp\"); "
 						],
 						"type": "text/javascript"
 					}
@@ -557,6 +653,143 @@
 			"response": []
 		},
 		{
+			"name": "Check/ValidationBcbp",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"/**I store the answer in JsonDta */\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"console.log('bcbp', pm.environment.get(\"bcbp\"))\r",
+							"\r",
+							"/**valid if the status code is 200*/\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"/**validate that the response code is the one I am waiting for in the js for the current iteration*/\r",
+							"pm.test(\"Checking response code\", () => {\r",
+							"    pm.expect(jsonData.code.toString()).to.eq(data.codeValidationBCBP.toString());\r",
+							"});\r",
+							"/**validate that the response message is the one I am expecting in the js for the current iteration*/\r",
+							"pm.test(\"Checking response message\", () => {\r",
+							"    pm.expect(jsonData.message.toString()).to.eq(data.messageValidationBCBP.toString());\r",
+							"});\r",
+							"postman.setNextRequest(\"Check/CheckIn\")\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"/**I assign the values to the parameters of the url from the json file*/\r",
+							"const keys = Object.keys(data);\r",
+							"keys.map((key) => {\r",
+							"    pm.environment.set(key, data[key]);\r",
+							"})\r",
+							"pm.environment.unset(\"_comentario\");\r",
+							"pm.environment.unset(\"index\");\r",
+							"\r",
+							"if (!!data.bcbp_Restore) {\r",
+							"    pm.environment.set(\"bcbp\", pm.environment.get(\"bcbp_Backup\"))\r",
+							"}\r",
+							"if (data.lastName === \"flightCode falso1\" || data.lastName === \"flightCode falso2\" || data.lastName === \"BCBP sin M\") {\r",
+							"    pm.environment.set(\"bcbp\", pm.environment.get(\"boarding_false\"));\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{easypoc.token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "Authorization",
+						"value": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiU1VQRVJVU0VSIiwibmFtZSI6IkVBU1lBSVJQT1JUIiwidGltZSI6IjE2LzkvMjAyMCAxNjoxNzozNiIsImlzcyI6Imh0dHA6Ly9lYXN5cG9jLmRldi5haWMuY2FycmFzY28uYWVybzo4MCIsImF1ZCI6Imh0dHA6Ly9lYXN5cG9jLmRldi5haWMuY2FycmFzY28uYWVybzo4MCJ9.qgDA0DaVmXHnmdT_ECe6jCEe1qbUPIsFPJwQXsax4Mk",
+						"disabled": true
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 Edg/87.0.664.66"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json-patch+json"
+					},
+					{
+						"key": "Origin",
+						"value": "http://easypoc.dev.aic.carrasco.aero"
+					},
+					{
+						"key": "Referer",
+						"value": "http://easypoc.dev.aic.carrasco.aero/swagger/index.html"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "es,es-ES;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{easypoc.url}}/api/Check/ValidationBcbp?idRunway={{runwayId}}&bcbp={{bcbp}}&onlyBcbpCheck={{onlyBcbpCheck}}&manual={{manual}}",
+					"host": [
+						"{{easypoc.url}}"
+					],
+					"path": [
+						"api",
+						"Check",
+						"ValidationBcbp"
+					],
+					"query": [
+						{
+							"key": "idRunway",
+							"value": "{{runwayId}}"
+						},
+						{
+							"key": "bcbp",
+							"value": "{{bcbp}}"
+						},
+						{
+							"key": "onlyBcbpCheck",
+							"value": "{{onlyBcbpCheck}}"
+						},
+						{
+							"key": "manual",
+							"value": "{{manual}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Check/CheckIn",
 			"event": [
 				{
@@ -590,12 +823,13 @@
 							"/**Only the ConfirmEntry request for code 0 will be executed.*/\r",
 							"if (jsonData.code.toString() == \"0\" && data.codeCheckin.toString() == \"0\") {\r",
 							"    postman.setNextRequest(\"ConfirmEntry\")\r",
-							"}/**Disembarks passenger */ \r",
+							"}/**Disembarks passenger */\r",
 							"else if (!!data.disembark) {\r",
 							"    postman.setNextRequest(\"Check/CheckOut\")\r",
 							"} else {\r",
 							"    postman.setNextRequest(null)\r",
 							"}\r",
+							"\r",
 							""
 						],
 						"type": "text/javascript"
@@ -715,6 +949,351 @@
 							"value": "{{vipCode}}",
 							"description": "Código vip leido si existiera (opcional) del pax",
 							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ConfirmEntry",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"/**I store the answer in JsonDta */\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"console.log('jsonData', jsonData)\r",
+							"\r",
+							"/**valid if the status code is 200*/\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"/**validate that the response code is the one I am waiting for in the js for the current iteration*/\r",
+							"pm.test(\"ConfirmEntry Code\", function () {\r",
+							"    pm.expect(jsonData.code.toString()).to.eq(data.codeConfirmEntry.toString());\r",
+							"});\r",
+							"/**validate that the response message is the one I am expecting in the js for the current iteration*/\r",
+							"pm.test(\"ConfirmEntry message\", function () {\r",
+							"    pm.expect(jsonData.message.toString()).to.eq(data.messageConfirmEntry.toString());\r",
+							"});\r",
+							"\r",
+							"if (data.codeConfirmEntry.toString() == \"0\") {\r",
+							"   pm.test(\"Code is 0\", () => {\r",
+							"        pm.expect(jsonData.code).to.eq(0)\r",
+							"    })\r",
+							"}\r",
+							"/**Repeat the request for confirmEntry */\r",
+							"if (!!data.repeat) {\r",
+							"    postman.setNextRequest(\"ConfirmEntryRepeat\")\r",
+							"}/**Disembark the passenger once confirmed */ \r",
+							"else if (!!data.disembark) {\r",
+							"    postman.setNextRequest(\"Check/CheckOut\")\r",
+							"} else {\r",
+							"    postman.setNextRequest(null)\r",
+							"}\r",
+							"\r",
+							"/*\r",
+							"let calfecha = convertirFecha();\r",
+							"\r",
+							"if (data.dateOfBirth_set == 0) {\r",
+							"    pm.environment.set(\"dateOfBirth\", calfecha[3]);\r",
+							"    pm.environment.set(\"expirationDate\", calfecha[1]);\r",
+							"} else if (data.dateOfBirth_set == 1) {\r",
+							"    pm.environment.set(\"dateOfBirth\", calfecha[5]);\r",
+							"    pm.environment.set(\"expirationDate\", calfecha[1]);\r",
+							"} else if (data.dateOfBirth_set == 2) {\r",
+							"    pm.environment.set(\"dateOfBirth\", calfecha[4]);\r",
+							"    pm.environment.set(\"expirationDate\", calfecha[1]);\r",
+							"} else {\r",
+							"    pm.environment.set(\"dateOfBirth\", calfecha[3]);\r",
+							"    pm.environment.set(\"expirationDate\", calfecha[0]);\r",
+							"}\r",
+							"\r",
+							"if (data.dateOfBirth_set == 4) {\r",
+							"    pm.environment.set(\"dateOfBirth\", null);\r",
+							"} else if (data.dateOfBirth_set == 5) {\r",
+							"    let fecha = new Date();\r",
+							"    let yyyy = fecha.getFullYear() - 18;      //año -18\r",
+							"    let mm = \"Mar\";\r",
+							"    let dd = fecha.getDate();\r",
+							"    let dateOf = yyyy + '-' + mm + '-' + dd;        //HOY\r",
+							"    pm.environment.set(\"dateOfBirth\", dateOf);\r",
+							"}\r",
+							"\r",
+							"function convertirFecha() {\r",
+							"\r",
+							"    fechas = new Array;\r",
+							"    let fecha = new Date();                                            //hoy\r",
+							"    let fecha1 = new Date(); fecha1.setDate(new Date().getDate() + 1)  //mañana\r",
+							"    let fecha0 = new Date(); fecha0.setDate(new Date().getDate() - 1)  //ayer\r",
+							"\r",
+							"    let yyyy = fecha.getFullYear();         //hoy\r",
+							"    let mm = fecha.getMonth() + 1;\r",
+							"    let dd = fecha.getDate();\r",
+							"\r",
+							"    let mm1 = fecha1.getMonth() + 1;        //mañana\r",
+							"    let dd1 = fecha1.getDate();\r",
+							"\r",
+							"    let mm0 = fecha0.getMonth() + 1;        //ayer\r",
+							"    let dd0 = fecha0.getDate();\r",
+							"\r",
+							"    let yy18 = fecha.getFullYear() - 18;      //año -18\r",
+							"\r",
+							"    if (mm < 10) { mm = \"0\" + mm }\r",
+							"    if (dd < 10) { dd = \"0\" + dd }\r",
+							"    if (mm1 < 10) { mm1 = \"0\" + mm1 }\r",
+							"    if (dd1 < 10) { dd1 = \"0\" + dd1 }\r",
+							"    if (mm0 < 10) { mm0 = \"0\" + mm0 }\r",
+							"    if (dd0 < 10) { dd0 = \"0\" + dd0 }\r",
+							"\r",
+							"    fechas[0] = yyyy + '-' + mm + '-' + dd;        //HOY\r",
+							"    fechas[1] = yyyy + '-' + mm1 + '-' + dd1;      //MAÑANA\r",
+							"    fechas[2] = yyyy + '-' + mm0 + '-' + dd0;    //AYER\r",
+							"\r",
+							"    fechas[3] = yy18 + '-' + mm + '-' + dd;    //HOY -18YYYY\r",
+							"    fechas[4] = yy18 + '-' + mm1 + '-' + dd1;    //MAÑANA -18YYYY\r",
+							"    fechas[5] = yy18 + '-' + mm0 + '-' + dd0;    //AYER -18YYYY\r",
+							"\r",
+							"    return fechas;\r",
+							"}*/"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"/**I assign the values to the parameters of the url from the json file*/\r",
+							"const keys = Object.keys(data);\r",
+							"keys.map((key) => {\r",
+							"    pm.environment.set(key, data[key]);\r",
+							"})\r",
+							"pm.environment.unset(\"_comentario\");\r",
+							"pm.environment.unset(\"index\");\r",
+							"\r",
+							"if (!!data.VBTransactionId_Null) {\r",
+							"    pm.environment.set(\"VBTransactionId\", pm.environment.get(\"VBTransactionId_New\"));\r",
+							"}\r",
+							"if (!!data.VBTransactionId_Empty) {\r",
+							"    pm.environment.set(\"VBTransactionId\", pm.environment.get(\"VBTransactionId_New\"));\r",
+							"}\r",
+							"if (!!data.VBTransactionId_Nonexistent) {\r",
+							"    pm.environment.set(\"VBTransactionId\", pm.environment.get(\"VBTransactionId_New\"));\r",
+							"}\r",
+							"if (!!data.VBTransactionId_Restore) {\r",
+							"    pm.environment.set(\"VBTransactionId\", pm.environment.get(\"VBTransactionId_Backup\"));\r",
+							"}\r",
+							"if (!!data.VBTransactionEP_Restore) {\r",
+							"    pm.environment.set(\"idTransactionEP\", pm.environment.get(\"idTransactionEP_Backup\"));\r",
+							"}\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{easypoc.token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "Authorization",
+						"value": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiU1VQRVJVU0VSIiwibmFtZSI6IkVBU1lBSVJQT1JUIiwidGltZSI6IjE2LzkvMjAyMCAxNjoxNzozNiIsImlzcyI6Imh0dHA6Ly9lYXN5cG9jLmRldi5haWMuY2FycmFzY28uYWVybzo4MCIsImF1ZCI6Imh0dHA6Ly9lYXN5cG9jLmRldi5haWMuY2FycmFzY28uYWVybzo4MCJ9.qgDA0DaVmXHnmdT_ECe6jCEe1qbUPIsFPJwQXsax4Mk",
+						"disabled": true
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 Edg/87.0.664.66"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json-patch+json"
+					},
+					{
+						"key": "Origin",
+						"value": "http://easypoc.dev.aic.carrasco.aero"
+					},
+					{
+						"key": "Referer",
+						"value": "http://easypoc.dev.aic.carrasco.aero/swagger/index.html"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "es,es-ES;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"photoTypeId\": 0,\r\n  \"photo\": \"string\",\r\n  \"description\": \"string\"\r\n}"
+				},
+				"url": {
+					"raw": "{{easypoc.url}}/api/ConfirmEntry/ConfirmEntry?VBTransactionId={{VBTransactionId}}&idTransactionEP={{idTransactionEP}}&confirmTrx={{confirmTrx}}&runwayId={{runwayId}}&wu={{wu}}",
+					"host": [
+						"{{easypoc.url}}"
+					],
+					"path": [
+						"api",
+						"ConfirmEntry",
+						"ConfirmEntry"
+					],
+					"query": [
+						{
+							"key": "VBTransactionId",
+							"value": "{{VBTransactionId}}",
+							"description": " Id del sistema que invoca este metodo"
+						},
+						{
+							"key": "idTransactionEP",
+							"value": "{{idTransactionEP}}",
+							"description": "Id devuelto en el metodo checking al solicitar el chequeo para este paso"
+						},
+						{
+							"key": "confirmTrx",
+							"value": "{{confirmTrx}}",
+							"description": "0 si el pasajero no paso (Timeout) - 1 si el pasajero paso"
+						},
+						{
+							"key": "runwayId",
+							"value": "{{runwayId}}",
+							"description": "id de la pasarela o puesto manual"
+						},
+						{
+							"key": "wu",
+							"value": "{{wu}}",
+							"description": "1 si la aerolina paga la tasa - 0 si la aerolinea no paga la tasa (por defecto = 1)"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check/CheckOut",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"/**I store the answer in JsonDta */\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"console.log('jsonData', jsonData)\r",
+							"\r",
+							"/**valid if the status code is 200*/\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"/**validate that the response code is the one I am waiting for in the js for the current iteration*/\r",
+							"pm.test(\"Check/CheckOut Code\", function () {\r",
+							"    pm.expect(jsonData.code.toString()).to.eq(data.codeCheckOut.toString());\r",
+							"});\r",
+							"/**validate that the response message is the one I am expecting in the js for the current iteration*/\r",
+							"pm.test(\"Check/CheckOut message\", function () {\r",
+							"    pm.expect(jsonData.message.toString()).to.eq(data.messageCheckOut.toString());\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{easypoc.token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "Authorization",
+						"value": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiU1VQRVJVU0VSIiwibmFtZSI6IkVBU1lBSVJQT1JUIiwidGltZSI6IjE2LzkvMjAyMCAxNjoxNzozNiIsImlzcyI6Imh0dHA6Ly9lYXN5cG9jLmRldi5haWMuY2FycmFzY28uYWVybzo4MCIsImF1ZCI6Imh0dHA6Ly9lYXN5cG9jLmRldi5haWMuY2FycmFzY28uYWVybzo4MCJ9.qgDA0DaVmXHnmdT_ECe6jCEe1qbUPIsFPJwQXsax4Mk",
+						"disabled": true
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 Edg/87.0.664.66"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json-patch+json"
+					},
+					{
+						"key": "Origin",
+						"value": "http://easypoc.dev.aic.carrasco.aero"
+					},
+					{
+						"key": "Referer",
+						"value": "http://easypoc.dev.aic.carrasco.aero/swagger/index.html"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "es,es-ES;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\"{{bcbp}}\""
+				},
+				"url": {
+					"raw": "{{easypoc.url}}/api/Check/CheckOut?runwayId={{runwayId}}",
+					"host": [
+						"{{easypoc.url}}"
+					],
+					"path": [
+						"api",
+						"Check",
+						"CheckOut"
+					],
+					"query": [
+						{
+							"key": "runwayId",
+							"value": "{{runwayId}}",
+							"description": "id de la pasarela o puesto manual"
 						}
 					]
 				}

@@ -105,7 +105,7 @@
 						"exec": [
 							"/**I store the answer in JsonDta */\r",
 							"const jsonData = pm.response.json();\r",
-							"let numberFlight = 4;\r",
+							"let numberFlight = 0;\r",
 							"\r",
 							"/**I count the number of flights that exist */\r",
 							"const flights = jsonData.data.length;\r",
@@ -444,6 +444,9 @@
 							"/**I store the answer in JsonDta */\r",
 							"let jsonData = pm.response.json();\r",
 							"\r",
+							"/**I save the id of the crewmember created so that I can delete it in another service. */\r",
+							"pm.environment.set(\"crewId\", jsonData.data.id);\r",
+							"\r",
 							"/**valid if the status code is 200*/\r",
 							"pm.test(\"Status code is 200\", () => {\r",
 							"    pm.response.to.have.status(200);\r",
@@ -462,6 +465,7 @@
 							"});\r",
 							"\r",
 							"pm.environment.set(\"bcbp\", jsonData.data.bcbp);\r",
+							"pm.environment.set(\"bcbpTripulation\", jsonData.data.bcbp);\r",
 							"pm.environment.set('codeBCBP', jsonData.code)\r",
 							"\r",
 							""
@@ -581,7 +585,15 @@
 							"        pm.expect(jsonData.data.length.toString()).to.be.equal(data.countToGenerate.toString());\r",
 							"    });\r",
 							"}\r",
-							"(pm.environment.get(\"codeBCBP\") != 0) ? postman.setNextRequest(null) : postman.setNextRequest(\"Check/ValidationBcbp\"); "
+							"if (data.lastName === \"Código null\" || data.lastName === \"Código vacío\" || data.lastName === \"Código menor\" ||\r",
+							"    data.lastName === \"Código mayor\") {\r",
+							"    postman.setNextRequest(\"GetFligthCrew\");\r",
+							"} else if (pm.environment.get(\"codeBCBP\") != 0) {\r",
+							"    postman.setNextRequest(null);\r",
+							"} else {\r",
+							"    postman.setNextRequest(\"Check/ValidationBcbp\");\r",
+							"}\r",
+							"//(pm.environment.get(\"codeBCBP\") != 0) ? postman.setNextRequest(\"GetFligthCrew\") : postman.setNextRequest(\"Check/ValidationBcbp\");"
 						],
 						"type": "text/javascript"
 					}
@@ -820,9 +832,13 @@
 							"        pm.expect(jsonData.code).to.eq(0)\r",
 							"    })\r",
 							"}\r",
+							"\r",
 							"/**Only the ConfirmEntry request for code 0 will be executed.*/\r",
 							"if (jsonData.code.toString() == \"0\" && data.codeCheckin.toString() == \"0\") {\r",
 							"    postman.setNextRequest(\"ConfirmEntry\")\r",
+							"} else if (data.lastName === \"Código numérico\" || data.lastName === \"Código alfabético\" || data.lastName === \"Código caract esp\" ||\r",
+							"    data.lastName === \"Código inexist\") {\r",
+							"    postman.setNextRequest(\"GetFligthCrew\")\r",
 							"}/**Disembarks passenger */\r",
 							"else if (!!data.disembark) {\r",
 							"    postman.setNextRequest(\"Check/CheckOut\")\r",
@@ -981,16 +997,18 @@
 							"});\r",
 							"\r",
 							"if (data.codeConfirmEntry.toString() == \"0\") {\r",
-							"   pm.test(\"Code is 0\", () => {\r",
+							"    pm.test(\"Code is 0\", () => {\r",
 							"        pm.expect(jsonData.code).to.eq(0)\r",
 							"    })\r",
 							"}\r",
 							"/**Repeat the request for confirmEntry */\r",
 							"if (!!data.repeat) {\r",
 							"    postman.setNextRequest(\"ConfirmEntryRepeat\")\r",
-							"}/**Disembark the passenger once confirmed */ \r",
+							"}/**Disembark the passenger once confirmed */\r",
 							"else if (!!data.disembark) {\r",
 							"    postman.setNextRequest(\"Check/CheckOut\")\r",
+							"} else if (data.passengerType === \"Tripulacion\") {\r",
+							"    postman.setNextRequest(\"GetFligthCrew\")\r",
 							"} else {\r",
 							"    postman.setNextRequest(null)\r",
 							"}\r",
@@ -1191,6 +1209,220 @@
 			"response": []
 		},
 		{
+			"name": "ConfirmEntryRepeat",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"/**I store the answer in JsonDta */\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"/**valid if the status code is 200*/\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"ConfirmEntry Code\", function () {\r",
+							"    pm.expect(jsonData.code.toString()).to.eq(data.codeConfirmEntryRepeat.toString());\r",
+							"});\r",
+							"/**validate that the response message is the one I am expecting in the js for the current iteration*/\r",
+							"pm.test(\"ConfirmEntry message\", function () {\r",
+							"    pm.expect(jsonData.message.toString()).to.eq(data.messageConfirmEntryRepeat.toString());\r",
+							"});\r",
+							"/**Go to service Check/CheckOut if you want to disembark */\r",
+							"if (!!data.disembark) {\r",
+							"    postman.setNextRequest(\"Check/CheckOut\")\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{easypoc.token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "Authorization",
+						"value": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiU1VQRVJVU0VSIiwibmFtZSI6IkVBU1lBSVJQT1JUIiwidGltZSI6IjE2LzkvMjAyMCAxNjoxNzozNiIsImlzcyI6Imh0dHA6Ly9lYXN5cG9jLmRldi5haWMuY2FycmFzY28uYWVybzo4MCIsImF1ZCI6Imh0dHA6Ly9lYXN5cG9jLmRldi5haWMuY2FycmFzY28uYWVybzo4MCJ9.qgDA0DaVmXHnmdT_ECe6jCEe1qbUPIsFPJwQXsax4Mk",
+						"disabled": true
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 Edg/87.0.664.66"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json-patch+json"
+					},
+					{
+						"key": "Origin",
+						"value": "http://easypoc.dev.aic.carrasco.aero"
+					},
+					{
+						"key": "Referer",
+						"value": "http://easypoc.dev.aic.carrasco.aero/swagger/index.html"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "es,es-ES;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"photoTypeId\": 0,\r\n  \"photo\": \"string\",\r\n  \"description\": \"string\"\r\n}"
+				},
+				"url": {
+					"raw": "{{easypoc.url}}/api/ConfirmEntry/ConfirmEntry?VBTransactionId={{VBTransactionId}}&idTransactionEP={{idTransactionEP}}&confirmTrx={{confirmTrx}}&runwayId={{runwayId}}&wu={{wu}}",
+					"host": [
+						"{{easypoc.url}}"
+					],
+					"path": [
+						"api",
+						"ConfirmEntry",
+						"ConfirmEntry"
+					],
+					"query": [
+						{
+							"key": "VBTransactionId",
+							"value": "{{VBTransactionId}}",
+							"description": " Id del sistema que invoca este metodo"
+						},
+						{
+							"key": "idTransactionEP",
+							"value": "{{idTransactionEP}}",
+							"description": "Id devuelto en el metodo checking al solicitar el chequeo para este paso"
+						},
+						{
+							"key": "confirmTrx",
+							"value": "{{confirmTrx}}",
+							"description": "0 si el pasajero no paso (Timeout) - 1 si el pasajero paso"
+						},
+						{
+							"key": "runwayId",
+							"value": "{{runwayId}}",
+							"description": "id de la pasarela o puesto manual"
+						},
+						{
+							"key": "wu",
+							"value": "{{wu}}",
+							"description": "1 si la aerolina paga la tasa - 0 si la aerolinea no paga la tasa (por defecto = 1)"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetFligthCrew",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"/**I store the answer in JsonDta */\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"/**valid if the status code is 200*/\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"/**validate that the response code is the one I am waiting for in the js for the current iteration*/\r",
+							"pm.test(\"Checking response code\", () => {\r",
+							"    pm.expect(jsonData.code.toString()).to.eq(data.codeCrew.toString());\r",
+							"});\r",
+							"/**validate that the response message is the one I am expecting in the js for the current iteration*/\r",
+							"pm.test(\"Checking response message\", () => {\r",
+							"    pm.expect(jsonData.message.toString()).to.eq(data.messageCrew.toString());\r",
+							"});\r",
+							"if (data.passengerType === \"Tripulacion\") {\r",
+							"    /**Validates that the crew member's bcbp was created previously*/\r",
+							"    pm.test('Verify bcbp', () => {\r",
+							"        pm.expect(jsonData.data[0].bcbp).to.eq(pm.environment.get(\"bcbpTripulation\"))\r",
+							"    })\r",
+							"}\r",
+							"postman.setNextRequest(\"DeleteCrew\")"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{easypoc.token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://easypoc.stg.aic.carrasco.aero/api/Crew/GetFligthCrew?flightNumber={{flightCode}}&stda={{stda}}",
+					"protocol": "https",
+					"host": [
+						"easypoc",
+						"stg",
+						"aic",
+						"carrasco",
+						"aero"
+					],
+					"path": [
+						"api",
+						"Crew",
+						"GetFligthCrew"
+					],
+					"query": [
+						{
+							"key": "flightNumber",
+							"value": "{{flightCode}}"
+						},
+						{
+							"key": "stda",
+							"value": "{{stda}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Check/CheckOut",
 			"event": [
 				{
@@ -1294,6 +1526,75 @@
 							"key": "runwayId",
 							"value": "{{runwayId}}",
 							"description": "id de la pasarela o puesto manual"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteCrew",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"/**I store the answer in JsonDta */\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"/**valid if the status code is 200*/\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"/**validate that the response code is the one I am waiting for in the js for the current iteration*/\r",
+							"pm.test(\"Checking response code\", () => {\r",
+							"    pm.expect(jsonData.code.toString()).to.eq(data.codeDeleteCrew.toString());\r",
+							"});\r",
+							"/**validate that the response message is the one I am expecting in the js for the current iteration*/\r",
+							"pm.test(\"Checking response message\", () => {\r",
+							"    pm.expect(jsonData.message.toString()).to.eq(data.messageDeleteCrew.toString());\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const Keys = Object.keys(data);\r",
+							"Keys.map(keys => (\r",
+							"    pm.environment.set(keys, data[keys])\r",
+							"));\r",
+							"pm.environment.unset(\"_comentario\");\r",
+							"pm.environment.unset(\"index\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://easypoc.stg.aic.carrasco.aero/api/Crew/DeleteCrew?crewId={{crewId}}",
+					"protocol": "https",
+					"host": [
+						"easypoc",
+						"stg",
+						"aic",
+						"carrasco",
+						"aero"
+					],
+					"path": [
+						"api",
+						"Crew",
+						"DeleteCrew"
+					],
+					"query": [
+						{
+							"key": "crewId",
+							"value": "{{crewId}}"
 						}
 					]
 				}

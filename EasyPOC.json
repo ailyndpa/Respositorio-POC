@@ -3,6 +3,7 @@
        "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp para flightCode nulo && DeleteCrew validando messageDeleteCrew y codeDeleteCrew para crewId nulo",
        "index": 1,
        "crewId": null,
+       "deleteCrew": true,
        "userName": "QA",
        "terminalId": "1",
        "name": "Test1",
@@ -26,6 +27,7 @@
        "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp para flightCode vacío && DeleteCrew validando messageDeleteCrew y codeDeleteCrew para crewId vacío",
        "index": 2,
        "crewId": "",
+       "deleteCrew": true,
        "userName": "QA",
        "terminalId": "1",
        "name": "Test2",
@@ -48,6 +50,7 @@
        "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp && Check/ValidationBcbp validando messageValidationBCBP y codeValidationBCBP para flightCode numérico && DeleteCrew validando messageDeleteCrew y codeDeleteCrew para crewId no existente",
        "index": 3,
        "crewId": "1234",
+       "deleteCrew": true,
        "userName": "QA",
        "terminalId": "1",                                                                  
        "name": "Test3",
@@ -78,6 +81,7 @@
        "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp && Check/ValidationBcbp validando messageValidationBCBP y codeValidationBCBP && Check/CheckIn validando messageCheckin y codeCheckin para flightCode alfabético && DeleteCrew validando messageDeleteCrew y codeDeleteCrew para crewId alfabético",
        "index": 4,
        "crewId": "asdf",
+       "deleteCrew": true,
        "userName": "QA",
        "terminalId": "1",                                                                  
        "name": "Test4",
@@ -108,6 +112,7 @@
        "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp && Check/ValidationBcbp validando messageValidationBCBP y codeValidationBCBP para flightCode con caracteres especiales && DeleteCrew validando messageDeleteCrew y codeDeleteCrew para crewId formado por caracteres especiales",
        "index": 5,
        "crewId": "*-+",
+       "deleteCrew": true,
        "userName": "QA",
        "terminalId": "1",                                                                  
        "name": "Test5",
@@ -138,6 +143,7 @@
      {
        "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp para campo flightCode con una longitud inferior a 8",
        "index": 6,
+       "deleteCrew": false,
        "userName": "QA",
        "terminalId": "1",                                                                  
        "name": "Test6",
@@ -181,6 +187,7 @@
      {
        "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp para campo flightCode con una longitud superior a 8",
        "index": 8,
+       "deleteCrew": false,
        "userName": "QA",
        "terminalId": "1",                                                                  
        "name": "Test8",
@@ -223,6 +230,7 @@
      {
        "_comentario": "Check/ValidationBcbp && Check/CheckIn validando messageValidationBCBP, codeValidationBCBP, messageCheckin y codeCheckin para flightCode no existente",
        "index": 10,
+       "deleteCrew": false,
        "userName": "QA",
        "terminalId": "1",                                                                  
        "name": "Test10",
@@ -246,8 +254,10 @@
        "codeBatchBcbp": "0"
      },
      {
-       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination null",
+       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination null && GetFligthCrew validando messageCrew y codeCrew para stda null",
        "index": 11,
+       "deleteCrew": false,
+       "stda": null,
        "userName": "QA",
        "terminalId": "1",                                                                  
        "name": "Test11",
@@ -260,11 +270,15 @@
        "countToGenerate": 1,
        "destination": null,
        "messageBatchBcbp": "Destino de vuelo nulo o vacío",
-       "codeBatchBcbp": "2023"
+       "codeBatchBcbp": "2023",
+       "messageCrew": "stda del vuelo nulo o vacío",
+       "codeCrew": "2021"
      },
      {
-       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination vacío",
+       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination vacío && GetFligthCrew validando messageCrew y codeCrew para stda vacío",
        "index": 12,
+       "deleteCrew": false,
+       "stda": "",
        "userName": "QA",
        "terminalId": "1",                                                                  
        "name": "Test12",
@@ -277,11 +291,15 @@
        "countToGenerate": 10,
        "destination": "",
        "messageBatchBcbp": "Destino de vuelo nulo o vacío",
-       "codeBatchBcbp": "2023"
+       "codeBatchBcbp": "2023",
+       "messageCrew": "stda del vuelo nulo o vacío",
+       "codeCrew": "2021"
      },
      {
-       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination formado por caracteres especiales",
+       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination formado por caracteres especiales && GetFligthCrew validando messageCrew y codeCrew para stda alfabético",
        "index": 13,
+       "deleteCrew": false,
+       "stda": "abcdefghij",
        "userName": "QA",
        "terminalId": "1",                                                                  
        "name": "Test13",
@@ -302,11 +320,15 @@
        "confirmTrx": "0",
        "wu": "1",
        "messageConfirmEntry": "No se detectó al pasajero o el pasajero no ingresó",
-       "codeConfirmEntry": "2"
+       "codeConfirmEntry": "2",
+       "messageCrew": "El stda del vuelo debe ser un número entero",
+       "codeCrew": "2019"
      },
      {
-       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp OK && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination formado por números",
+       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp OK && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination formado por números && GetFligthCrew validando messageCrew y codeCrew para stda formado por caracteres especiales",
        "index": 14,
+       "deleteCrew": false,
+       "stda": "><*/+-!$()",
        "userName": "QA",
        "terminalId": "1",                                                                  
        "name": "Test14",
@@ -319,11 +341,15 @@
        "countToGenerate": 1,
        "destination": "123",
        "messageBatchBcbp": "Destino del vuelo contiene dígitos inválidos",
-       "codeBatchBcbp": "2024"
+       "codeBatchBcbp": "2024",
+       "messageCrew": "El stda del vuelo debe ser un número entero",
+       "codeCrew": "2019"
      },
      {
-       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp OK && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination menor que 3",
+       "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp OK && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination menor que 3 && GetFligthCrew validando messageCrew y codeCrew para stda decimal",
        "index": 15,
+       "deleteCrew": false,
+       "stda": "1.5",
        "userName": "QA",
        "terminalId": "1",                                                                  
        "name": "Test15",
@@ -336,7 +362,9 @@
        "countToGenerate": 1,
        "destination": "MV",
        "messageBatchBcbp": "Destino del vuelo tiene largo inválido",
-       "codeBatchBcbp": "2025"
+       "codeBatchBcbp": "2025",
+       "messageCrew": "El stda del vuelo debe ser un número entero",
+       "codeCrew": "2019"
      }, 
      {
        "_comentario": "CreatePassengerBcbp validando messageBcbp y codeBcbp OK && CreateBatchBcbp validando messageBatchBcbp y codeBatchBcbp para destination mayor que 3",

@@ -585,8 +585,8 @@
 							"        pm.expect(jsonData.data.length.toString()).to.be.equal(data.countToGenerate.toString());\r",
 							"    });\r",
 							"}\r",
-							"if (data.lastName === \"Código null\" || data.lastName === \"Código vacío\" || data.lastName === \"Código menor\" ||\r",
-							"    data.lastName === \"Código mayor\") {\r",
+							"if (data.flightCode === null || data.flightCode === \"\" || data.flightCode === \"MVD1234\" || data.flightCode === \"MVD123409\" ||\r",
+							"    data.stda === null || data.stda === \"\" || data.stda === \"><*/+-!$()\" || data.stda === \"1.5\") {\r",
 							"    postman.setNextRequest(\"GetFligthCrew\");\r",
 							"} else if (pm.environment.get(\"codeBCBP\") != 0) {\r",
 							"    postman.setNextRequest(null);\r",
@@ -1349,6 +1349,8 @@
 							"/**I store the answer in JsonDta */\r",
 							"let jsonData = pm.response.json();\r",
 							"\r",
+							"console.log('data.deleteCrew', data.deleteCrew)\r",
+							"\r",
 							"/**valid if the status code is 200*/\r",
 							"pm.test(\"Status code is 200\", () => {\r",
 							"    pm.response.to.have.status(200);\r",
@@ -1367,7 +1369,21 @@
 							"        pm.expect(jsonData.data[0].bcbp).to.eq(pm.environment.get(\"bcbpTripulation\"))\r",
 							"    })\r",
 							"}\r",
-							"postman.setNextRequest(\"DeleteCrew\")"
+							"(!!data.deleteCrew) ? postman.setNextRequest(\"DeleteCrew\") : postman.setNextRequest(null)"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const Keys = Object.keys(data);\r",
+							"Keys.map(keys => (\r",
+							"    pm.environment.set(keys, data[keys])\r",
+							"));\r",
+							"pm.environment.unset(\"_comentario\");\r",
+							"pm.environment.unset(\"index\");"
 						],
 						"type": "text/javascript"
 					}
@@ -1394,14 +1410,9 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "https://easypoc.stg.aic.carrasco.aero/api/Crew/GetFligthCrew?flightNumber={{flightCode}}&stda={{stda}}",
-					"protocol": "https",
+					"raw": "{{easypoc.url}}/api/Crew/GetFligthCrew?flightNumber={{flightCode}}&stda={{stda}}",
 					"host": [
-						"easypoc",
-						"stg",
-						"aic",
-						"carrasco",
-						"aero"
+						"{{easypoc.url}}"
 					],
 					"path": [
 						"api",
@@ -1416,6 +1427,83 @@
 						{
 							"key": "stda",
 							"value": "{{stda}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteCrew",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"/**I store the answer in JsonDta */\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"console.log(\"DATOS>>\", jsonData)\r",
+							"\r",
+							"/**valid if the status code is 200*/\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"/**validate that the response code is the one I am waiting for in the js for the current iteration*/\r",
+							"pm.test(\"Checking response code\", () => {\r",
+							"    pm.expect(jsonData.code.toString()).to.eq(data.codeDeleteCrew.toString());\r",
+							"});\r",
+							"/**validate that the response message is the one I am expecting in the js for the current iteration*/\r",
+							"pm.test(\"Checking response message\", () => {\r",
+							"    pm.expect(jsonData.message.toString()).to.eq(data.messageDeleteCrew.toString());\r",
+							"});\r",
+							"postman.setNextRequest(null)"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const Keys = Object.keys(data);\r",
+							"Keys.map(keys => (\r",
+							"    pm.environment.set(keys, data[keys])\r",
+							"));\r",
+							"pm.environment.unset(\"_comentario\");\r",
+							"pm.environment.unset(\"index\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{easypoc.token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{easypoc.url}}/api/Crew/DeleteCrew?crewId={{crewId}}",
+					"host": [
+						"{{easypoc.url}}"
+					],
+					"path": [
+						"api",
+						"Crew",
+						"DeleteCrew"
+					],
+					"query": [
+						{
+							"key": "crewId",
+							"value": "{{crewId}}"
 						}
 					]
 				}
@@ -1526,75 +1614,6 @@
 							"key": "runwayId",
 							"value": "{{runwayId}}",
 							"description": "id de la pasarela o puesto manual"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "DeleteCrew",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"/**I store the answer in JsonDta */\r",
-							"let jsonData = pm.response.json();\r",
-							"\r",
-							"/**valid if the status code is 200*/\r",
-							"pm.test(\"Status code is 200\", () => {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"/**validate that the response code is the one I am waiting for in the js for the current iteration*/\r",
-							"pm.test(\"Checking response code\", () => {\r",
-							"    pm.expect(jsonData.code.toString()).to.eq(data.codeDeleteCrew.toString());\r",
-							"});\r",
-							"/**validate that the response message is the one I am expecting in the js for the current iteration*/\r",
-							"pm.test(\"Checking response message\", () => {\r",
-							"    pm.expect(jsonData.message.toString()).to.eq(data.messageDeleteCrew.toString());\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"const Keys = Object.keys(data);\r",
-							"Keys.map(keys => (\r",
-							"    pm.environment.set(keys, data[keys])\r",
-							"));\r",
-							"pm.environment.unset(\"_comentario\");\r",
-							"pm.environment.unset(\"index\");"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "https://easypoc.stg.aic.carrasco.aero/api/Crew/DeleteCrew?crewId={{crewId}}",
-					"protocol": "https",
-					"host": [
-						"easypoc",
-						"stg",
-						"aic",
-						"carrasco",
-						"aero"
-					],
-					"path": [
-						"api",
-						"Crew",
-						"DeleteCrew"
-					],
-					"query": [
-						{
-							"key": "crewId",
-							"value": "{{crewId}}"
 						}
 					]
 				}

@@ -20,12 +20,15 @@
 							"pm.test(\"Status code is 200\", () => {\r",
 							"    pm.response.to.have.status(200);\r",
 							"});\r",
+							"/**Check the current version of Easy POC*/\r",
 							"pm.test(\"System version\", ()=>{\r",
 							"    pm.expect(jsonData.version).to.eql(\"4.32.21.26\")\r",
 							"});\r",
+							"/**Check system name*/\r",
 							"pm.test(\"System name\", ()=>{\r",
 							"    pm.expect(jsonData.name).to.eql(\"EasyPoc\")\r",
 							"});\r",
+							"/**Verifying the existence of properties in domainController*/\r",
 							"pm.test(\"Verifying the existence of properties in domainController\", function () {\r",
 							"    pm.expect(jsonData.domainController).to.have.all.keys('currentTime', 'currentTimeLocal');\r",
 							"});"
@@ -273,15 +276,12 @@
 							"        pm.expect(jsonData.data.length).to.be.greaterThan(0);\r",
 							"    });\r",
 							"}\r",
-							"\r",
 							"pm.environment.set('codeBCBP', jsonData.code)\r",
-							"\r",
 							"let date = new Date();\r",
 							"\r",
 							"//Consecutive to create unique VBTransactionId\r",
 							"pm.environment.set(\"VBTransactionId\", \"POC_\" + date.getTime());\r",
 							"pm.environment.set(\"VBTransactionId_Backup\", \"POC_\" + date.getTime());\r",
-							"\r",
 							"\r",
 							"/**If the passenger type is crew create the bcbp for this passenger*/\r",
 							"if (data.passengerType === \"Tripulacion\") {\r",
@@ -981,8 +981,6 @@
 							"/**I store the answer in JsonDta */\r",
 							"let jsonData = pm.response.json();\r",
 							"\r",
-							"console.log('jsonData', jsonData)\r",
-							"\r",
 							"/**valid if the status code is 200*/\r",
 							"pm.test(\"Status code is 200\", () => {\r",
 							"    pm.response.to.have.status(200);\r",
@@ -1007,7 +1005,7 @@
 							"}/**Disembark the passenger once confirmed */\r",
 							"else if (!!data.disembark) {\r",
 							"    postman.setNextRequest(\"Check/CheckOut\")\r",
-							"} else if (data.passengerType === \"Tripulacion\") {\r",
+							"} else if (data.passengerType === \"Tripulacion\" || data.stda === \"abcdefghij\") {\r",
 							"    postman.setNextRequest(\"GetFligthCrew\")\r",
 							"} else {\r",
 							"    postman.setNextRequest(null)\r",
@@ -1349,8 +1347,6 @@
 							"/**I store the answer in JsonDta */\r",
 							"let jsonData = pm.response.json();\r",
 							"\r",
-							"console.log('data.deleteCrew', data.deleteCrew)\r",
-							"\r",
 							"/**valid if the status code is 200*/\r",
 							"pm.test(\"Status code is 200\", () => {\r",
 							"    pm.response.to.have.status(200);\r",
@@ -1369,7 +1365,11 @@
 							"        pm.expect(jsonData.data[0].bcbp).to.eq(pm.environment.get(\"bcbpTripulation\"))\r",
 							"    })\r",
 							"}\r",
-							"(!!data.deleteCrew) ? postman.setNextRequest(\"DeleteCrew\") : postman.setNextRequest(null)"
+							"if (!!data.intelliPoc) {\r",
+							"    postman.setNextRequest(\"GetIntelliPocResponses\")\r",
+							"} else {\r",
+							"    postman.setNextRequest(null)\r",
+							"}"
 						],
 						"type": "text/javascript"
 					}
@@ -1442,8 +1442,6 @@
 						"exec": [
 							"/**I store the answer in JsonDta */\r",
 							"let jsonData = pm.response.json();\r",
-							"\r",
-							"console.log(\"DATOS>>\", jsonData)\r",
 							"\r",
 							"/**valid if the status code is 200*/\r",
 							"pm.test(\"Status code is 200\", () => {\r",
@@ -1533,7 +1531,8 @@
 							"/**validate that the response message is the one I am expecting in the js for the current iteration*/\r",
 							"pm.test(\"Check/CheckOut message\", function () {\r",
 							"    pm.expect(jsonData.message.toString()).to.eq(data.messageCheckOut.toString());\r",
-							"});"
+							"});\r",
+							"postman.setNextRequest(null)"
 						],
 						"type": "text/javascript"
 					}
@@ -1614,6 +1613,109 @@
 							"key": "runwayId",
 							"value": "{{runwayId}}",
 							"description": "id de la pasarela o puesto manual"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetIntelliPocResponses",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"/**I assign the values to the parameters of the url from the json file*/\r",
+							"const keys = Object.keys(data);\r",
+							"keys.map((key) => {\r",
+							"    pm.environment.set(key, data[key]);\r",
+							"})\r",
+							"pm.environment.unset(\"_comentario\");\r",
+							"pm.environment.unset(\"index\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"/**I store the answer in JsonDta */\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"/**valid if the status code is 200*/\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"const value = Object.keys(jsonData).length;\r",
+							"console.log('vienen datos', value)\r",
+							"\r",
+							"if (value > 0) {\r",
+							"    /**validate that the response code is the one I am waiting for in the js for the current iteration*/\r",
+							"    pm.test(\"Checking response code\", () => {\r",
+							"        pm.expect(jsonData.code.toString()).to.eq(data.codeIntelli.toString());\r",
+							"    });\r",
+							"    /**validate that the response message is the one I am expecting in the js for the current iteration*/\r",
+							"    pm.test(\"Checking response message\", () => {\r",
+							"        pm.expect(jsonData.message.toString()).to.eq(data.messageIntelli.toString());\r",
+							"    });\r",
+							"}\r",
+							"if (!!data.deleteCrew) {\r",
+							"    postman.setNextRequest(\"DeleteCrew\")\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{easypoc.token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{easypoc.url}}/api/IntelliPoc/GetIntelliPocResponses?userName={{userName}}&flightNumber={{flightNumber}}&stda={{stda}}",
+					"host": [
+						"{{easypoc.url}}"
+					],
+					"path": [
+						"api",
+						"IntelliPoc",
+						"GetIntelliPocResponses"
+					],
+					"query": [
+						{
+							"key": "userName",
+							"value": "{{userName}}"
+						},
+						{
+							"key": "flightNumber",
+							"value": "{{flightNumber}}"
+						},
+						{
+							"key": "stda",
+							"value": "{{stda}}"
 						}
 					]
 				}

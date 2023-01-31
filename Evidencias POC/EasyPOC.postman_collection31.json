@@ -33,14 +33,22 @@
 							"    pm.expect(jsonData.domainController).to.have.all.keys('currentTime', 'currentTimeLocal');\r",
 							"});\r",
 							"console.log('INDEX: ', data.index)\r",
-							"console.log(\"data._comentario\", data._comentario)\r",
+							"console.log(\"data.userName\", data.userName)\r",
+							"console.log(\"data.number\", data.number)\r",
+							"console.log(\"data.seatComment\", data.seatComment == \"seatLetter nulo\")\r",
+							"console.log(\"data.seatComment\", data.seatComment == \"seatLetter vacío\")\r",
+							"console.log(\"data.seatComment\", data.seatComment)\r",
+							"console.log(\"data.seatComment\", data.seatComment == \"destination nulo\")\r",
+							"console.log(\"data.seatComment\", data.seatComment == \"destination vacío\")\r",
 							"\r",
 							"/*if (data._comentario == \"BlockSeat validando userName nulo\" || data._comentario == \"BlockSeat validando userName vacío\" || data._comentario == \"BlockSeat validando number vacío\" || data._comentario == \"BlockSeat validando number nulo\" || data._comentario == \"BlockSeat validando seatLetter nulo\" || data._comentario == \"BlockSeat validando seatLetter vacío\" || data.seatComment == null || data.seatComment == \"\" || data._comentario == \"BlockSeat validando destination nulo\" || data._comentario == \"BlockSeat validando destination vacío\") {\r",
 							"    postman.setNextRequest(\"BlockSeat\");\r",
 							"}*/\r",
-							"if (data.userName == null || data.userName == \"\" || data.number == null || data.number == \"\" || data.seatComment == \"seatLetter nulo\" || data.seatComment == \"seatLetter vacío\" || data.seatComment == null || data.seatComment == \"\" || data.seatComment == \"destination nulo\" || data.seatComment == \"destination vacío\") {\r",
+							"if (data.seatNumber == null || data.seatNumber == \"\" || data.seatNumber == \"asdf\" || data.seatNumber == \"!$%\") {\r",
+							"    postman.setNextRequest(\"GetBlockedSeatByData\");\r",
+							"} else if (data.userName == null || data.userName == \"\" || data.number == null || data.number == \"\" || data.seatComment == \"seatLetter nulo\" || data.seatComment == \"seatLetter vacío\" || data.seatComment == null || data.seatComment == \"\" || data.seatComment == \"destination nulo\" || data.seatComment == \"destination vacío\") {\r",
 							"    postman.setNextRequest(\"BlockSeat\");\r",
-							"}"
+							"} "
 						],
 						"type": "text/javascript"
 					}
@@ -1021,72 +1029,7 @@
 							"    postman.setNextRequest(\"GetFligthCrew\")\r",
 							"} else {\r",
 							"    postman.setNextRequest(null)\r",
-							"}\r",
-							"\r",
-							"/*\r",
-							"let calfecha = convertirFecha();\r",
-							"\r",
-							"if (data.dateOfBirth_set == 0) {\r",
-							"    pm.environment.set(\"dateOfBirth\", calfecha[3]);\r",
-							"    pm.environment.set(\"expirationDate\", calfecha[1]);\r",
-							"} else if (data.dateOfBirth_set == 1) {\r",
-							"    pm.environment.set(\"dateOfBirth\", calfecha[5]);\r",
-							"    pm.environment.set(\"expirationDate\", calfecha[1]);\r",
-							"} else if (data.dateOfBirth_set == 2) {\r",
-							"    pm.environment.set(\"dateOfBirth\", calfecha[4]);\r",
-							"    pm.environment.set(\"expirationDate\", calfecha[1]);\r",
-							"} else {\r",
-							"    pm.environment.set(\"dateOfBirth\", calfecha[3]);\r",
-							"    pm.environment.set(\"expirationDate\", calfecha[0]);\r",
-							"}\r",
-							"\r",
-							"if (data.dateOfBirth_set == 4) {\r",
-							"    pm.environment.set(\"dateOfBirth\", null);\r",
-							"} else if (data.dateOfBirth_set == 5) {\r",
-							"    let fecha = new Date();\r",
-							"    let yyyy = fecha.getFullYear() - 18;      //año -18\r",
-							"    let mm = \"Mar\";\r",
-							"    let dd = fecha.getDate();\r",
-							"    let dateOf = yyyy + '-' + mm + '-' + dd;        //HOY\r",
-							"    pm.environment.set(\"dateOfBirth\", dateOf);\r",
-							"}\r",
-							"\r",
-							"function convertirFecha() {\r",
-							"\r",
-							"    fechas = new Array;\r",
-							"    let fecha = new Date();                                            //hoy\r",
-							"    let fecha1 = new Date(); fecha1.setDate(new Date().getDate() + 1)  //mañana\r",
-							"    let fecha0 = new Date(); fecha0.setDate(new Date().getDate() - 1)  //ayer\r",
-							"\r",
-							"    let yyyy = fecha.getFullYear();         //hoy\r",
-							"    let mm = fecha.getMonth() + 1;\r",
-							"    let dd = fecha.getDate();\r",
-							"\r",
-							"    let mm1 = fecha1.getMonth() + 1;        //mañana\r",
-							"    let dd1 = fecha1.getDate();\r",
-							"\r",
-							"    let mm0 = fecha0.getMonth() + 1;        //ayer\r",
-							"    let dd0 = fecha0.getDate();\r",
-							"\r",
-							"    let yy18 = fecha.getFullYear() - 18;      //año -18\r",
-							"\r",
-							"    if (mm < 10) { mm = \"0\" + mm }\r",
-							"    if (dd < 10) { dd = \"0\" + dd }\r",
-							"    if (mm1 < 10) { mm1 = \"0\" + mm1 }\r",
-							"    if (dd1 < 10) { dd1 = \"0\" + dd1 }\r",
-							"    if (mm0 < 10) { mm0 = \"0\" + mm0 }\r",
-							"    if (dd0 < 10) { dd0 = \"0\" + dd0 }\r",
-							"\r",
-							"    fechas[0] = yyyy + '-' + mm + '-' + dd;        //HOY\r",
-							"    fechas[1] = yyyy + '-' + mm1 + '-' + dd1;      //MAÑANA\r",
-							"    fechas[2] = yyyy + '-' + mm0 + '-' + dd0;    //AYER\r",
-							"\r",
-							"    fechas[3] = yy18 + '-' + mm + '-' + dd;    //HOY -18YYYY\r",
-							"    fechas[4] = yy18 + '-' + mm1 + '-' + dd1;    //MAÑANA -18YYYY\r",
-							"    fechas[5] = yy18 + '-' + mm0 + '-' + dd0;    //AYER -18YYYY\r",
-							"\r",
-							"    return fechas;\r",
-							"}*/"
+							"}"
 						],
 						"type": "text/javascript"
 					}
@@ -1111,13 +1054,13 @@
 							"}\r",
 							"if (!!data.VBTransactionId_Nonexistent) {\r",
 							"    pm.environment.set(\"VBTransactionId\", pm.environment.get(\"VBTransactionId_New\"));\r",
-							"}\r",
+							"}/*\r",
 							"if (!!data.VBTransactionId_Restore) {\r",
 							"    pm.environment.set(\"VBTransactionId\", pm.environment.get(\"VBTransactionId_Backup\"));\r",
 							"}\r",
 							"if (!!data.VBTransactionEP_Restore) {\r",
 							"    pm.environment.set(\"idTransactionEP\", pm.environment.get(\"idTransactionEP_Backup\"));\r",
-							"}\r",
+							"}*/\r",
 							"\r",
 							"\r",
 							""
@@ -1387,9 +1330,9 @@
 							"}\r",
 							"if (!!data.blockSeat) {\r",
 							"    postman.setNextRequest(\"BlockSeat\")\r",
-							"} else if (!!data.intelliPoc) {\r",
+							"}/* else if (!!data.intelliPoc) {\r",
 							"    postman.setNextRequest(\"GetIntelliPocResponses\")\r",
-							"} else {\r",
+							"} */else {\r",
 							"    postman.setNextRequest(null)\r",
 							"}"
 						],
@@ -1753,7 +1696,7 @@
 							"        pm.expect(jsonData.message.toString()).to.eq(data.messageIntelli.toString());\r",
 							"    });\r",
 							"}\r",
-							"if (!!data.getBlockSeats) {\r",
+							"if (!!data.getBlockedSeats) {\r",
 							"    postman.setNextRequest(\"GetBlockedSeatsByData\")\r",
 							"} else { postman.setNextRequest(null) }"
 						],
@@ -1950,7 +1893,7 @@
 							"pm.test(\"Checking response message\", () => {\r",
 							"    pm.expect(jsonData.message.toString()).to.eq(data.messageGetBlockedSeats.toString());\r",
 							"});\r",
-							"if (!!data.getBlockSeat) {\r",
+							"if (!!data.getBlockedSeat) {\r",
 							"    postman.setNextRequest(\"GetBlockedSeatByData\")\r",
 							"} else { postman.setNextRequest(null) }"
 						],
@@ -2037,6 +1980,17 @@
 						],
 						"type": "text/javascript"
 					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"if (!!data.valid_stdaJulOptionalParam) {\r",
+							"    pm.environment.set(\"stdaJulOptionalParam\", data.new_stdaJulOptionalParam);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
 				}
 			],
 			"request": {
@@ -2053,7 +2007,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{easypoc.url}}/api/Seat/GetBlockedSeatByData?flightCode={{flightCode}}&stdaJul={{stdaJulOptionalParam}}&seatNumber=",
+					"raw": "{{easypoc.url}}/api/Seat/GetBlockedSeatByData?flightCode={{flightCode}}&stdaJul={{stdaJulOptionalParam}}&seatNumber={{seatNumber}}",
 					"host": [
 						"{{easypoc.url}}"
 					],
@@ -2073,7 +2027,7 @@
 						},
 						{
 							"key": "seatNumber",
-							"value": ""
+							"value": "{{seatNumber}}"
 						}
 					]
 				}
